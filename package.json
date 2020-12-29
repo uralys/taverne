@@ -2,6 +2,14 @@
   "name": "@uralys/hookstores",
   "version": "1.0.0",
   "description": "Elementary Flux implementation using React hooks",
+  "repository": "@uralys/hookstores",
+  "keywords": [
+    "flux",
+    "react",
+    "state",
+    "hooks"
+  ],
+  "author": "Rich Harris",
   "main": "dist/cjs/hookstores.js",
   "module": "dist/esm/hookstores.js",
   "files": [

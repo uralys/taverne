@@ -1,5 +1,7 @@
 # hookstores
 
+![](https://img.shields.io/npm/v/@uralys/hookstores?color=%23123)
+
 ## motivation
 
 - don't want to use an external lib such as Redux or RxJs
@@ -7,6 +9,12 @@
 
 --> should split stores/states to apply local rendering
 => React `useState` and `useEffect` are enough to connect a container to each store
+
+## installation
+
+```sh
+> npm i --save @uralys/hookstores@1.0.0
+```
 
 ## usage
 
@@ -106,7 +114,7 @@ import React, {useLayoutEffect, useState} from 'react';
 import ItemsComponent from './component';
 import {name as itemsStoreName} from 'path/to/items/store';
 
-const ItemsContainer = (props) => {
+const ItemsContainer = props => {
   const [componentProps, setComponentProps] = useState();
   const itemsStore = props[itemsStoreName];
 
@@ -129,10 +137,10 @@ use [`prop drilling`](https://kentcdodds.com/blog/prop-drilling) from your conta
 ```js
 import {SELECT_ITEM} from 'path/to/actions';
 
-const ItemsContainer = (props) => {
+const ItemsContainer = props => {
   const {dispatch} = useDispatcher();
 
-  const selectItem = (id) => () => {
+  const selectItem = id => () => {
     dispatch({
       type: SELECT_ITEM,
       itemId: id
