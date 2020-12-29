@@ -1,6 +1,6 @@
 {
   "name": "@uralys/hookstores",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Elementary Flux implementation using React hooks",
   "main": "dist/cjs/hookstores.js",
   "module": "dist/esm/hookstores.js",
@@ -14,8 +14,7 @@
   "scripts": {
     "clean": "rimraf ./dist",
     "build": "npm run clean && rollup -c",
-    "lint": "eslint src",
-    "test": "ava"
+    "lint": "eslint src"
   },
   "peerDependencies": {
     "react": "^16.0.0 || ^17.0.0"
@@ -27,7 +26,6 @@
     "@babel/preset-react": "^7.12.10",
     "@rollup/plugin-babel": "^5.2.2",
     "@rollup/plugin-node-resolve": "^11.0.1",
-    "ava": "^3.14.0",
     "babel-eslint": "^10.0.3",
     "eslint": "^7.16.0",
     "eslint-config-prettier": "^7.1.0",
@@ -35,7 +33,7 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-react": "7.x",
+    "eslint-plugin-react": "^7.21.5",
     "rollup": "^2.35.1"
   }
 }

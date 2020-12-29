@@ -1,6 +1,5 @@
 {
   "extends": [
-    "standard",
     "eslint:recommended",
     "plugin:react/recommended",
     "prettier"
@@ -15,6 +14,10 @@
   "ignorePatterns": [
     "dist"
   ],
+  "globals": {
+    "console": true,
+    "window": true
+  },
   "settings": {
     "react": {
       "version": "detect"
