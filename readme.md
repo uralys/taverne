@@ -1,6 +1,6 @@
 # hookstores
 
-![](https://img.shields.io/npm/v/@uralys/hookstores?color=%23123)
+![npmjs](https://img.shields.io/npm/v/@uralys/hookstores?color=%23123)
 
 ## motivation
 
