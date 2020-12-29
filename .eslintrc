@@ -12,6 +12,9 @@
     "react/prop-types": "off",
     "no-unused-vars": "warn"
   },
+  "ignorePatterns": [
+    "dist"
+  ],
   "settings": {
     "react": {
       "version": "detect"
