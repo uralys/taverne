@@ -1,6 +1,8 @@
 # hookstores
 
-![npmjs](https://img.shields.io/npm/v/@uralys/hookstores?color=%23123)
+<a href="https://www.npmjs.com/package/@uralys/hookstores">
+  <img src="https://img.shields.io/npm/v/@uralys/hookstores?color=%23123" alt="Current npm package version." />
+</a>
 
 ## motivation
 
@@ -13,7 +15,7 @@
 ## installation
 
 ```sh
-> npm i --save @uralys/hookstores@1.0.0
+> npm i --save @uralys/hookstores
 ```
 
 ## usage
