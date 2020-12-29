@@ -1,0 +1,20 @@
+{
+  "extends": [
+    "standard",
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "prettier"
+  ],
+  "parser": "babel-eslint",
+  "rules": {
+    "no-debugger": "off",
+    "no-console": "off",
+    "react/prop-types": "off",
+    "no-unused-vars": "warn"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  }
+}

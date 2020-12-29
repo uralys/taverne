@@ -1,0 +1,6 @@
+# built files
+dist
+node_modules
+
+# osx
+*.DS_Store
