@@ -1,66 +1,59 @@
 // -----------------------------------------------------------------------------
-// Rollup config from https://github.com/ReactTraining/react-router/blob/master/packages/react-router-dom/rollup.config.js
-// -----------------------------------------------------------------------------
 
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const replace = require('rollup-plugin-replace');
+import resolve from '@rollup/plugin-node-resolve';
+import babel from '@rollup/plugin-babel';
+
+// -----------------------------------------------------------------------------
 
 const NAME = 'hookstores';
 
-function isBareModuleId(id) {
-  return (
-    !id.startsWith('.') && !id.includes(path.join(process.cwd(), 'modules'))
-  );
-}
+// -----------------------------------------------------------------------------
+
+const common = {
+  input: 'src/index.js',
+  plugins: [
+    resolve({
+      moduleDirectories: ['node_modules']
+    }),
+    babel({babelHelpers: 'bundled'})
+  ],
+  external: ['react']
+};
+
+// -----------------------------------------------------------------------------
 
 const cjs = [
   {
-    input: 'src/index.js',
+    ...common,
     output: {
       file: `dist/cjs/${NAME}.js`,
       sourcemap: true,
       format: 'cjs',
       esModule: false
-    },
-    external: isBareModuleId,
-    plugins: [
-      babel({exclude: /node_modules/, sourceMaps: true, rootMode: 'upward'}),
-      replace({'process.env.NODE_ENV': JSON.stringify('development')})
-    ]
+    }
   },
   {
-    input: 'src/index.js',
+    ...common,
     output: {
       file: `dist/cjs/${NAME}.min.js`,
       sourcemap: true,
       format: 'cjs'
-    },
-    external: isBareModuleId,
-    plugins: [
-      babel({exclude: /node_modules/, sourceMaps: true, rootMode: 'upward'}),
-      replace({'process.env.NODE_ENV': JSON.stringify('production')})
-      // uglify()
-    ]
+    }
   }
 ];
 
 const esm = [
   {
-    input: 'src/index.js',
-    output: {file: `dist/esm/${NAME}.js`, sourcemap: true, format: 'esm'},
-    external: isBareModuleId,
-    plugins: [
-      babel({
-        exclude: /node_modules/,
-        runtimeHelpers: true,
-        sourceMaps: true,
-        plugins: [['@babel/transform-runtime', {useESModules: true}]],
-        rootMode: 'upward'
-      })
-    ]
+    ...common,
+    output: {
+      file: `dist/esm/${NAME}.js`,
+      sourcemap: true,
+      format: 'esm'
+    }
   }
 ];
+
+// -----------------------------------------------------------------------------
 
 let config;
 switch (process.env.BUILD_ENV) {
@@ -74,4 +67,6 @@ switch (process.env.BUILD_ENV) {
     config = cjs.concat(esm);
 }
 
-module.exports = config;
+// -----------------------------------------------------------------------------
+
+export default config;

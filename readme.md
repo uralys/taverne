@@ -1,12 +1,14 @@
 # hookstores
 
-## external package
+## motivation
 
-should be published using un extracted version of <https://github.com/chrisdugne/testing-stores/blob/master/src/lib/hookstores/>
+- don't want to use an external lib such as Redux or RxJs
+- don't use React context: it would re-render tons of useless stuffs
 
-track <https://github.com/chrisdugne/testing-stores/issues/1>
+--> should split stores/states to apply local rendering
+=> React `useState` and `useEffect` are enough to connect a container to each store
 
-## usage (preparing package readme)
+## usage
 
 ### context providers
 
@@ -104,7 +106,7 @@ import React, {useLayoutEffect, useState} from 'react';
 import ItemsComponent from './component';
 import {name as itemsStoreName} from 'path/to/items/store';
 
-const ItemsContainer = props => {
+const ItemsContainer = (props) => {
   const [componentProps, setComponentProps] = useState();
   const itemsStore = props[itemsStoreName];
 
@@ -127,10 +129,10 @@ use [`prop drilling`](https://kentcdodds.com/blog/prop-drilling) from your conta
 ```js
 import {SELECT_ITEM} from 'path/to/actions';
 
-const ItemsContainer = props => {
+const ItemsContainer = (props) => {
   const {dispatch} = useDispatcher();
 
-  const selectItem = id => () => {
+  const selectItem = (id) => () => {
     dispatch({
       type: SELECT_ITEM,
       itemId: id
