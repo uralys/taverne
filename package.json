@@ -2,9 +2,15 @@
   "name": "@uralys/hookstores",
   "version": "0.0.1",
   "description": "Elementary Flux implementation using React hooks",
+  "main": "src/index.js",
+  "module": "esm/hookstores.js",
+  "files": [
+    "src",
+    "esm"
+  ],
   "scripts": {
     "clean": "rimraf ./dist",
-    "build": "npm run clean && webpack --mode production",
+    "build": "npm run clean && rollup -c",
     "lint": "eslint src",
     "test": "ava"
   },
@@ -12,18 +18,18 @@
     "react": "^16.0.0 || ^17.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9",
-    "@babel/preset-env": "^7.12.7",
-    "@babel/preset-react": "^7.12.7",
+    "@babel/core": "^7.12.10",
+    "@babel/plugin-transform-runtime": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-react": "^7.12.10",
     "ava": "^3.14.0",
     "babel-eslint": "^10.0.3",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.15.0",
-    "eslint-config-standard": "^14.1.1",
+    "eslint": "^7.16.0",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.1.0",
     "rollup": "^2.35.1",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",

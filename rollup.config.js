@@ -1,11 +1,15 @@
+// -----------------------------------------------------------------------------
+// Rollup config from https://github.com/ReactTraining/react-router/blob/master/packages/react-router-dom/rollup.config.js
+// -----------------------------------------------------------------------------
+
 const path = require('path');
 const babel = require('rollup-plugin-babel');
 const replace = require('rollup-plugin-replace');
 const commonjs = require('rollup-plugin-commonjs');
 const nodeResolve = require('rollup-plugin-node-resolve');
-const {uglify} = require('rollup-plugin-uglify');
 
 const pkg = require('./package.json');
+const NAME = 'hookstores';
 
 function isBareModuleId(id) {
   return (
@@ -15,9 +19,9 @@ function isBareModuleId(id) {
 
 const cjs = [
   {
-    input: 'modules/index.js',
+    input: 'src/index.js',
     output: {
-      file: `cjs/${pkg.name}.js`,
+      file: `dist/cjs/${NAME}.js`,
       sourcemap: true,
       format: 'cjs',
       esModule: false
@@ -29,21 +33,25 @@ const cjs = [
     ]
   },
   {
-    input: 'modules/index.js',
-    output: {file: `cjs/${pkg.name}.min.js`, sourcemap: true, format: 'cjs'},
+    input: 'src/index.js',
+    output: {
+      file: `dist/cjs/${NAME}.min.js`,
+      sourcemap: true,
+      format: 'cjs'
+    },
     external: isBareModuleId,
     plugins: [
       babel({exclude: /node_modules/, sourceMaps: true, rootMode: 'upward'}),
-      replace({'process.env.NODE_ENV': JSON.stringify('production')}),
-      uglify()
+      replace({'process.env.NODE_ENV': JSON.stringify('production')})
+      // uglify()
     ]
   }
 ];
 
 const esm = [
   {
-    input: 'modules/index.js',
-    output: {file: `esm/${pkg.name}.js`, sourcemap: true, format: 'esm'},
+    input: 'src/index.js',
+    output: {file: `dist/esm/${NAME}.js`, sourcemap: true, format: 'esm'},
     external: isBareModuleId,
     plugins: [
       babel({
@@ -53,76 +61,6 @@ const esm = [
         plugins: [['@babel/transform-runtime', {useESModules: true}]],
         rootMode: 'upward'
       })
-    ]
-  }
-];
-
-const globals = {react: 'React'};
-
-const umd = [
-  {
-    input: 'modules/index.js',
-    output: {
-      file: `umd/${pkg.name}.js`,
-      sourcemap: true,
-      sourcemapPathTransform: (relativePath) =>
-        relativePath.replace(/^.*?\/node_modules/, '../../node_modules'),
-      format: 'umd',
-      name: 'ReactRouterDOM',
-      globals
-    },
-    external: Object.keys(globals),
-    plugins: [
-      babel({
-        exclude: /node_modules/,
-        runtimeHelpers: true,
-        sourceMaps: true,
-        plugins: [['@babel/transform-runtime', {useESModules: true}]],
-        rootMode: 'upward'
-      }),
-      nodeResolve(),
-      commonjs({
-        include: /node_modules/,
-        namedExports: {
-          '../../node_modules/react-is/index.js': ['isValidElementType']
-        }
-      }),
-      replace({
-        'process.env.NODE_ENV': JSON.stringify('development')
-      })
-    ]
-  },
-  {
-    input: 'modules/index.js',
-    output: {
-      file: `umd/${pkg.name}.min.js`,
-      sourcemap: true,
-      sourcemapPathTransform: (relativePath) =>
-        relativePath.replace(/^.*?\/node_modules/, '../../node_modules'),
-      format: 'umd',
-      name: 'ReactRouterDOM',
-      globals
-    },
-    external: Object.keys(globals),
-    plugins: [
-      babel({
-        exclude: /node_modules/,
-        runtimeHelpers: true,
-        sourceMaps: true,
-        plugins: [['@babel/transform-runtime', {useESModules: true}]],
-        rootMode: 'upward'
-      }),
-      nodeResolve(),
-      commonjs({
-        include: /node_modules/,
-        namedExports: {
-          '../../node_modules/react-is/index.js': ['isValidElementType']
-        }
-      }),
-      replace({
-        'process.env.NODE_ENV': JSON.stringify('production')
-      }),
-      uglify()
     ]
   }
 ];
@@ -135,11 +73,8 @@ switch (process.env.BUILD_ENV) {
   case 'esm':
     config = esm;
     break;
-  case 'umd':
-    config = umd;
-    break;
   default:
-    config = cjs.concat(esm).concat(umd);
+    config = cjs.concat(esm);
 }
 
 module.exports = config;
