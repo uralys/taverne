@@ -8,11 +8,11 @@ You may read further if you're interested in how to manage your state with your 
 
 ## motivation
 
-- React is no more a `View` lib, it's now a complete framework: so either we pick a lighter lib for the `View`, or choosing React ❌ **we should'nt need to use an additional external lib** such as Redux, MobX or RxJs, Recoil, Jotail...
+- React is no more a `View` lib, it's now (v17) a complete framework: so either we pick a lighter lib for the `View`, or choosing React ❌ **we shouldn't need to use an additional external lib** such as Redux, MobX, RxJs, Recoil, Jotail...
 
 - A first approach could be to use local states and sporadic use of React context, like [explained here](https://kentcdodds.com/blog/application-state-management-with-react) by Kent C. Dodds, but ❌ it's not a proper Flux implementation, I'd rather have **my entire app state fully separated from the `View`**, and "connect" [containers](https://medium.com/@learnreact/container-components-c0e67432e005), mapping sub-states to the views, the way Redux allows to.
 
-- Using React context for a global app state would be ok for a small app, but would quickly lead to ❌ **tons of useless re-renderings**.
+- Using React context for a global app state, like [suggested here](https://ricostacruz.com/til/state-management-with-react-hooks) by Rico Sta. Cruz, [or here](https://blog.logrocket.com/use-hooks-and-context-not-react-and-redux/) by Ebenezer Don, would be ok for a _small application_, but would quickly lead to ❌ **tons of useless re-renderings**.
   That would eventually lead to lots of specific `useMemo` on every component requiring performance optimisation.
   So rather than to put the effort on developping on a proper state/component architecture, your effort will be spent on ❌ **writing those `useMemo` everywhere**.
 
