@@ -1,22 +1,20 @@
-# hookstores <a href="https://www.npmjs.com/package/@uralys/hookstores"><img src="https://img.shields.io/npm/v/@uralys/hookstores?color=%23123" alt="Current npm package version." /></a> <a href="https://www.npmjs.com/package/@uralys/hookstores"><img src="https://img.shields.io/badge/status-experimental-127712.svg" alt="Experimental solution." /> </a>
+# ⛵ hookstores <a href="https://www.npmjs.com/package/@uralys/hookstores"><img src="https://img.shields.io/npm/v/@uralys/hookstores?color=%23123" alt="Current npm package version." /></a> <a href="https://www.npmjs.com/package/@uralys/hookstores"><img src="https://img.shields.io/badge/status-experimental-127712.svg" alt="Experimental solution." /> </a>
 
-Hookstores is a React Flux implementation with React hooks.
+`Hookstores` is an elementary [Flux](https://facebook.github.io/flux/docs/in-depth-overview) implementation using React hooks.
 
-You may read further if you're interested in how to manage your state with your React application.
+![action->dispatcher->store->view](https://facebook.github.io/flux/img/overview/flux-simple-f8-diagram-1300w.png)
 
-![](https://facebook.github.io/flux/img/overview/flux-simple-f8-diagram-1300w.png)
+## 📚 motivation
 
-## motivation
+- React is no more a `View` lib, it's now (v17) a complete framework: so either we pick a lighter lib for the `View`, or choosing React ❌ **we shouldn't need to use an additional external framework** such as Redux, MobX, RxJs, Recoil, Jotail...
 
-- React is no more a `View` lib, it's now (v17) a complete framework: so either we pick a lighter lib for the `View`, or choosing React ❌ **we shouldn't need to use an additional external lib** such as Redux, MobX, RxJs, Recoil, Jotail...
+- A first approach could be to use local states and sporadic use of React context, like [explained here by Kent C. Dodds](https://kentcdodds.com/blog/application-state-management-with-react), but ❌ it's not a proper Flux implementation, I'd rather have **my entire app state fully separated from the `View`**, and "connect" [containers](https://medium.com/@learnreact/container-components-c0e67432e005), mapping sub-states to the views, the way Redux allows to.
 
-- A first approach could be to use local states and sporadic use of React context, like [explained here](https://kentcdodds.com/blog/application-state-management-with-react) by Kent C. Dodds, but ❌ it's not a proper Flux implementation, I'd rather have **my entire app state fully separated from the `View`**, and "connect" [containers](https://medium.com/@learnreact/container-components-c0e67432e005), mapping sub-states to the views, the way Redux allows to.
-
-- Using React context for a global app state, like [suggested here](https://ricostacruz.com/til/state-management-with-react-hooks) by Rico Sta. Cruz, [or here](https://blog.logrocket.com/use-hooks-and-context-not-react-and-redux/) by Ebenezer Don, would be ok for a _small application_, but would quickly lead to ❌ **tons of useless re-renderings**.
+- Using React context for a global app state, like [suggested here by Rico Sta. Cruz](https://ricostacruz.com/til/state-management-with-react-hooks), [or here by Ebenezer Don](https://blog.logrocket.com/use-hooks-and-context-not-react-and-redux/), would be ok for a _small application_, but would quickly lead to ❌ **tons of useless re-renderings**.
   That would eventually lead to lots of specific `useMemo` on every component requiring performance optimisation.
   So rather than to put the effort on developping on a proper state/component architecture, your effort will be spent on ❌ **writing those `useMemo` everywhere**.
 
-## experimentation
+## 🧙 experimentation
 
 The idea with `hookstores` is to implement a simple [Flux architecture](https://facebook.github.io/flux/docs/in-depth-overview)
 
@@ -24,7 +22,24 @@ The idea with `hookstores` is to implement a simple [Flux architecture](https://
 - ✅ applying **local rendering**, by mapping these stores to [containers](https://medium.com/@learnreact/container-components-c0e67432e005), using React hooks `useState` and `useEffect`.
 - ✅ using React context only to provide the `Dispatcher` everywhere, and `StoresProvider` who is emitting events to listeners of specific stores only.
 
-## installation
+## ☢️ disclaimer
+
+So yes, somehow it ends up as another lib to manage your React state 🙃.
+
+But since it's only few files you should understand what's behind the hood, then use and tweak them to your convenience _within your project_ rather than use it out of the box.
+
+Furthermore,
+
+- 🔴 it's not written in typescript 🙀
+- 🔴 there are no tests 💥
+
+That being said,
+
+- ✅ I'm confidently using it between many apps now,
+- ✅ so I prefer to have this package,
+- ✅ so why not sharing this experiment.
+
+## 📦 installation
 
 ```sh
 > npm i --save @uralys/hookstores
@@ -164,6 +179,6 @@ const ItemsContainer = props => {
 };
 ```
 
-## development
+## 🏗️ development
 
-local dev [tips]('dev.md')
+local dev [tips](dev.md)
