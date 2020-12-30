@@ -22,7 +22,7 @@ The idea with `hookstores` is to implement a simple [Flux architecture](https://
 
 - ✅ **splitting** the the global state into **stores**,
 - ✅ applying **local rendering**, by mapping these stores to [containers](https://medium.com/@learnreact/container-components-c0e67432e005), using React hooks `useState` and `useEffect`.
-- ✅ using React context only to provide the `Dispatcher` everywhere.
+- ✅ using React context only to provide the `Dispatcher` everywhere, and `StoresProvider` who is emitting events to listeners of specific stores only.
 
 ## installation
 
@@ -30,27 +30,29 @@ The idea with `hookstores` is to implement a simple [Flux architecture](https://
 > npm i --save @uralys/hookstores
 ```
 
-## usage
+## setup
 
 ### context providers
 
-use `Dispatcher` and `Stores` contexts providers
+use `Dispatcher` and `StoresProvider` context providers to compose your root `<App/>`
 
 ```js
-import {Dispatcher, Stores} from 'hookstores';
+import {Dispatcher, StoresProvider} from '@uralys/hookstores';
 ```
 
 ```html
 <Dispatcher>
-  <Stores>
-    <App id="{id}" />
-  </Stores>
+  <StoresProvider>
+    <App />
+  </StoresProvider>
 </Dispatcher>
 ```
 
+## usage
+
 ### descriptions
 
-list all stores within `stores-descriptions.js`:
+list all stores within a root file `stores-descriptions.js`:
 
 ```js
 import createItemsStore, {name as itemsStoreName} from 'path/to/items/store';
@@ -74,10 +76,7 @@ export default storeDescriptions;
 
 ### stores implementation
 
-- name
-- handledActions
-- createReducer
-- export factory
+🏗️ currently improving this part
 
 ### create stores
 

@@ -1,11 +1,48 @@
 // -----------------------------------------------------------------------------
 
-const createStore = (id = 'default', initialState, createReducer) => {
+const createReducer = (
+  getState,
+  subscriptions,
+  storeName,
+  handledActions,
+  reduce
+) => action => {
+  if (!handledActions.includes(action.type)) {
+    return;
+  }
+
+  console.log(`🏪 [hookstore|reducer] ${storeName} reduceAction`, action.type);
+
+  const currentState = getState();
+  const newState = reduce(currentState, action);
+
+  subscriptions.forEach(subscription => {
+    subscription(newState, action);
+  });
+
+  return newState;
+};
+
+// -----------------------------------------------------------------------------
+
+const createStore = (
+  id = 'default',
+  storeName,
+  initialState,
+  handledActions,
+  reduce
+) => {
   console.log('☢️ [hookstores] creating store', id);
   const subscriptions = [];
   let state = initialState;
 
-  const reduceAction = createReducer(() => state, subscriptions);
+  const reduceAction = createReducer(
+    () => state,
+    subscriptions,
+    storeName,
+    handledActions,
+    reduce
+  );
 
   const store = {
     id,
