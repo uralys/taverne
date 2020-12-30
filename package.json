@@ -22,7 +22,8 @@
   "scripts": {
     "clean": "rimraf ./dist",
     "build": "npm run clean && rollup -c",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
     "react": "^16.0.0 || ^17.0.0"
