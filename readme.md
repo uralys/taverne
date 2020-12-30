@@ -1,16 +1,28 @@
-# hookstores
+# hookstores <a href="https://www.npmjs.com/package/@uralys/hookstores"><img src="https://img.shields.io/npm/v/@uralys/hookstores?color=%23123" alt="Current npm package version." /></a> <a href="https://www.npmjs.com/package/@uralys/hookstores"><img src="https://img.shields.io/badge/status-experimental-127712.svg" alt="Experimental solution." /> </a>
 
-<a href="https://www.npmjs.com/package/@uralys/hookstores">
-  <img src="https://img.shields.io/npm/v/@uralys/hookstores?color=%23123" alt="Current npm package version." />
-</a>
+Hookstores is a React Flux implementation with React hooks.
+
+You may read further if you're interested in how to manage your state with your React appliction.
+
+![](https://facebook.github.io/flux/img/overview/flux-simple-f8-diagram-1300w.png)
 
 ## motivation
 
-- don't want to use an external lib such as Redux or RxJs
-- don't use React context: it would re-render tons of useless stuffs
+- React is no more a `View` lib, it's now a complete framework: so either we pick a lighter lib for the `View`, or choosing React ❌ **we should'nt need to use an additional external lib** such as Redux, MobX or RxJs, Recoil, Jotail...
 
---> should split stores/states to apply local rendering
-=> React `useState` and `useEffect` are enough to connect a container to each store
+- A first approach could be to use local states and sporadic use of React context, like [explained here](https://kentcdodds.com/blog/application-state-management-with-react) by Kent C. Dodds, but ❌ it's not a proper Flux implementation, I'd rather have **my entire app state fully separated from the `View`**, and "connect" [containers](https://medium.com/@learnreact/container-components-c0e67432e005), mapping sub-states to the views, the way Redux allows to.
+
+- Using React context for a global app state would be ok for a small app, but would quickly lead to ❌ **tons of useless re-renderings**.
+  That would eventually lead to lots of specific `useMemo` on every component requiring performance optimisation.
+  So rather than to put the effort on developping on a proper state/component architecture, your effort will be spent on ❌ **writing those `useMemo` everywhere**.
+
+## experimentation
+
+The idea with `hookstores` is to implement a simple [Flux architecture](https://facebook.github.io/flux/docs/in-depth-overview)
+
+- ✅ **splitting** the the global state into **stores**,
+- ✅ applying **local rendering**, by mapping these stores to [containers](https://medium.com/@learnreact/container-components-c0e67432e005), using React hooks `useState` and `useEffect`.
+- ✅ using React context only to provide the `Dispatcher` everywhere.
 
 ## installation
 
