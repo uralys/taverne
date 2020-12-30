@@ -163,3 +163,7 @@ const ItemsContainer = props => {
   return <ItemsComponent selectItem={selectItem} {...componentProps} />;
 };
 ```
+
+## development
+
+local dev [tips]('dev.md')

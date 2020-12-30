@@ -5,22 +5,21 @@ const createComputer = (
   subscriptions,
   storeDescription
 ) => action => {
-  const {handledActions, storeName, computeAction} = storeDescription;
+  const {handledActions, name, computeAction} = storeDescription;
 
   if (!handledActions.includes(action.type)) {
     return;
   }
 
-  console.log(`🏪 [hookstore|reducer] ${storeName} computeAction`, action.type);
+  console.log(`🏪 [hookstore] ${name} computes action`, action.type);
 
   const currentState = getState();
-  const newState = computeAction(currentState, action);
 
-  subscriptions.forEach(subscription => {
-    subscription(newState, action);
+  computeAction(currentState, action).then(newState => {
+    subscriptions.forEach(subscription => {
+      subscription(newState, action);
+    });
   });
-
-  return newState;
 };
 
 // -----------------------------------------------------------------------------
@@ -36,15 +35,15 @@ const createStore = storeDescription => {
   const store = {
     name,
     onDispatch: action => {
-      if (action.scope && action.scope !== store.id) {
-        console.log(`🏪 [hookstores] ${store.id} out of scope`);
+      if (action.scope && action.scope !== name) {
+        console.log(`🏪 [hookstores] ${name} out of scope`);
         return;
       }
       state = compute(action);
     },
     subscribe: subscription => {
       console.log(
-        `✅ [hookstores] adding a subscription to ${store.id}`,
+        `✅ [hookstores] adding a subscription to ${name}`,
         subscription
       );
       subscriptions.push(subscription);
@@ -53,7 +52,7 @@ const createStore = storeDescription => {
       subscriptions.splice(subscriptions.indexOf(subscription), 1);
 
       console.log(
-        `✅ [hookstores] removed a subscription to ${store.id}`,
+        `✅ [hookstores] removed a subscription to ${name}`,
         subscription
       );
     },

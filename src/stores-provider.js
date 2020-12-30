@@ -54,19 +54,19 @@ function StoresProvider(props) {
 
   const withStore = storeDescription => Component => {
     console.log('☢️ [hookstores] using a store', storeDescription);
-    const {id, prop} = storeDescription;
-    const store = stores.find(s => s.id === id);
+    const {name} = storeDescription;
+    const store = stores.find(s => s.name === name);
 
     if (!store) {
       throw new Error(
-        `❌ [hookstores] store ${id} was not registered. You must call createStores(storesDescriptions) at startup`
+        `❌ [hookstores] store ${name} was not registered. You must call createStores(storesDescriptions) at startup`
       );
     }
 
     const ComponentWithStore = props => {
       const _props = {
         ...props,
-        [prop]: store
+        [name]: store
       };
       return <Component {..._props} />;
     };
