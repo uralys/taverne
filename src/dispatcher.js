@@ -21,8 +21,9 @@ function useDispatcher() {
 // -----------------------------------------------------------------------------
 
 function Dispatcher(props) {
-  const listeners = [];
+  console.log('☢️ [hookstores] creating the Dispatcher');
 
+  const listeners = [];
   const addActionsListener = listener => listeners.push(listener);
 
   const dispatch = action => {
@@ -32,10 +33,12 @@ function Dispatcher(props) {
     });
   };
 
-  const value = {addActionsListener, dispatch};
-
-  console.log('☢️ [hookstores] creating the Dispatcher');
-  return <DispatcherContext.Provider value={value} {...props} />;
+  return (
+    <DispatcherContext.Provider
+      value={{addActionsListener, dispatch}}
+      {...props}
+    />
+  );
 }
 
 // -----------------------------------------------------------------------------

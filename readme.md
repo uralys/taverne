@@ -2,7 +2,7 @@
 
 Hookstores is a React Flux implementation with React hooks.
 
-You may read further if you're interested in how to manage your state with your React appliction.
+You may read further if you're interested in how to manage your state with your React application.
 
 ![](https://facebook.github.io/flux/img/overview/flux-simple-f8-diagram-1300w.png)
 
@@ -84,7 +84,7 @@ First thing the `<App>` has to do is to instanciate all stores.
 They will be registered and will listen to all `dispatched` actions through the `Dispatcher`.
 
 ```js
-import {useStores} from 'hookstores';
+import {useStores} from '@uralys/hookstores';
 import storeDescriptions from './stores-descriptions';
 
 const {createStores} = useStores();
@@ -97,7 +97,7 @@ createStores(storeDescriptions);
 compose your containers with every store you need
 
 ```js
-import {withStore} from 'hookstores';
+import {withStore} from '@uralys/hookstores';
 import storeDescriptions from './stores-descriptions';
 
 const {ballsStore, itemsStore} = storeDescriptions;

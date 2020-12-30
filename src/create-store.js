@@ -1,20 +1,20 @@
 // -----------------------------------------------------------------------------
 
-const createReducer = (
+const createComputer = (
   getState,
   subscriptions,
-  storeName,
-  handledActions,
-  reduce
+  storeDescription
 ) => action => {
+  const {handledActions, storeName, computeAction} = storeDescription;
+
   if (!handledActions.includes(action.type)) {
     return;
   }
 
-  console.log(`🏪 [hookstore|reducer] ${storeName} reduceAction`, action.type);
+  console.log(`🏪 [hookstore|reducer] ${storeName} computeAction`, action.type);
 
   const currentState = getState();
-  const newState = reduce(currentState, action);
+  const newState = computeAction(currentState, action);
 
   subscriptions.forEach(subscription => {
     subscription(newState, action);
@@ -25,33 +25,22 @@ const createReducer = (
 
 // -----------------------------------------------------------------------------
 
-const createStore = (
-  id = 'default',
-  storeName,
-  initialState,
-  handledActions,
-  reduce
-) => {
-  console.log('☢️ [hookstores] creating store', id);
+const createStore = storeDescription => {
+  const {name, initialState} = storeDescription;
+  console.log('☢️ [hookstores] creating store', name);
   const subscriptions = [];
   let state = initialState;
 
-  const reduceAction = createReducer(
-    () => state,
-    subscriptions,
-    storeName,
-    handledActions,
-    reduce
-  );
+  const compute = createComputer(() => state, subscriptions, storeDescription);
 
   const store = {
-    id,
+    name,
     onDispatch: action => {
       if (action.scope && action.scope !== store.id) {
         console.log(`🏪 [hookstores] ${store.id} out of scope`);
         return;
       }
-      state = reduceAction(action);
+      state = compute(action);
     },
     subscribe: subscription => {
       console.log(
@@ -69,7 +58,7 @@ const createStore = (
       );
     },
     debug: () => ({
-      id,
+      name,
       state,
       subscriptions
     })

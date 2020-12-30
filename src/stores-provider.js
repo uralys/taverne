@@ -1,4 +1,5 @@
 import React, {createContext, useContext} from 'react';
+import createStore from './create-store';
 import {useDispatcher} from './dispatcher';
 
 // -----------------------------------------------------------------------------
@@ -37,10 +38,9 @@ function StoresProvider(props) {
       storeDescriptions
     );
 
-    Object.keys(storeDescriptions).forEach(key => {
-      const {id, factory} = storeDescriptions[key];
-      const store = factory(id);
-      console.log(`☢️ [hookstores] registering ${id}`);
+    storeDescriptions.forEach(storeDescription => {
+      const store = createStore(storeDescription);
+      console.log(`☢️ [hookstores] registering ${storeDescription.name}`);
       addActionsListener(store);
       stores.push(store);
     });
