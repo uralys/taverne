@@ -1,6 +1,6 @@
 {
   "name": "@uralys/hookstores",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Elementary Flux implementation using React hooks",
   "repository": "https://github.com/uralys/hookstores",
   "keywords": [
