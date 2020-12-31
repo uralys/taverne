@@ -11,7 +11,7 @@ const createComputer = (
     return;
   }
 
-  console.log(`🏪 [hookstore] ${name} computes action`, action.type);
+  console.log(`🏪 [hookstores] ${name} computes action`, action.type);
 
   const currentState = getState();
 
@@ -19,6 +19,10 @@ const createComputer = (
     subscriptions.forEach(subscription => {
       subscription(newState, action);
     });
+
+    console.log(
+      `🏪 [hookstores] ${name} successfully notified all containers after ${action.type}`
+    );
   });
 };
 
@@ -27,13 +31,27 @@ const createComputer = (
 const createStore = storeDescription => {
   const {name, initialState} = storeDescription;
   console.log('☢️ [hookstores] creating store', name);
-  const subscriptions = [];
   let state = initialState;
+  const subscriptions = [];
+
+  // -------------------------------------------------
+  // computeAction is async, it will update storeState onSuccess
+
+  const storeStateUpdate = newState => {
+    state = newState;
+  };
+
+  subscriptions.push(storeStateUpdate);
+
+  // -------------------------------------------------
 
   const compute = createComputer(() => state, subscriptions, storeDescription);
 
+  // -------------------------------------------------
+
   const store = {
     name,
+    getState: () => state,
     onDispatch: action => {
       if (action.scope && action.scope !== name) {
         console.log(`🏪 [hookstores] ${name} out of scope`);
@@ -42,10 +60,7 @@ const createStore = storeDescription => {
       state = compute(action);
     },
     subscribe: subscription => {
-      console.log(
-        `✅ [hookstores] adding a subscription to ${name}`,
-        subscription
-      );
+      console.log(`✅ [hookstores] adding a subscription to ${name}`);
       subscriptions.push(subscription);
     },
     unsubscribe: subscription => {

@@ -11,7 +11,7 @@ function useDispatcher() {
 
   if (!context) {
     throw new Error(
-      `[hookstores] useDispatcher must be used within a <Dispatcher>`
+      `❌ [hookstores] useDispatcher must be used within a <Dispatcher>`
     );
   }
 
