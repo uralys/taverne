@@ -1,17 +1,14 @@
-const connectStore = (store, onStoreUpdate, options = {}) => {
+const connectStore = (store, onStoreUpdate) => {
   if (!store || !store.subscribe || !store.unsubscribe) {
     throw new Error(
       '🔴 cannot connect this store. Are your `props` properly overloaded using `withStore` ?'
     );
   }
 
-  console.log(`✅ [hookstores] connectStore`, options);
-  const {byPassInitialUpdate = false} = options;
+  // initialize the subscriber with current store state
+  onStoreUpdate(store.getState());
 
-  if (!byPassInitialUpdate) {
-    onStoreUpdate(store.getState());
-  }
-
+  // register to next store state updates
   store.subscribe(onStoreUpdate);
 
   return () => {
