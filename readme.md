@@ -4,6 +4,12 @@
 
 ![action->dispatcher->store->view](https://facebook.github.io/flux/img/overview/flux-simple-f8-diagram-1300w.png)
 
+---
+
+## intro
+
+---
+
 ## 📚 motivation
 
 - React is no more a `View` lib, it's now (v17) a complete framework: so either we pick a lighter lib for the `View`, or choosing React ❌ **we shouldn't need to use an additional external framework** such as Redux, MobX, RxJs, Recoil, Jotail...
@@ -43,6 +49,8 @@ That being said,
 
 ## 📦 installation
 
+---
+
 ```sh
 > npm i --save @uralys/hookstores
 ```
@@ -51,7 +59,7 @@ That being said,
 
 ## setup
 
-### context providers
+---
 
 use `Dispatcher` and `StoresProvider` context providers to compose your root `<App/>`
 
@@ -67,76 +75,81 @@ import {Dispatcher, StoresProvider} from '@uralys/hookstores';
 </Dispatcher>
 ```
 
+---
+
 ## usage
 
-### descriptions
+---
 
-list all stores within a root file `stores-descriptions.js`:
+In the following, let's illustrate how to use hookstores with a store of `Items`, with a fetch function, a `container` plugged to this store, and the `component` rendering the list of items.
+
+---
+
+### prepare descriptions
+
+Describe all your stores:
+
+- you should use one store for one feature (here the `items`)
+- define within `computeAction` how a store must update its state for every `handledAction`:
 
 ```js
-import createItemsStore, {name as itemsStoreName} from 'path/to/items/store';
-import createBallsStore, {name as ballsStoreName} from 'path/to/balls/store';
+/* ./features/items/store-description.js */
+const FETCH_ITEMS = 'FETCH_ITEMS';
 
-const storeDescriptions = {
-  itemsStore: {
-    id: 'items-store',
-    prop: itemsStoreName,
-    factory: createItemsStore
-  },
-  ballsStore: {
-    id: 'balls-store',
-    prop: ballsStoreName,
-    factory: createBallsStore
+const computeAction = async (currentState, action) => {
+  let newState;
+
+  switch (action.type) {
+    case FETCH_ITEMS: {
+      const items = await fetchItems();
+      newState = {...currentState, items};
+      break;
+    }
+    default:
+      newState = {...currentState};
   }
+
+  return newState;
 };
 
-export default storeDescriptions;
-```
+const itemsStoreDescription = {
+  name: 'itemsStore',
+  initialState: {items: null},
+  handledActions: [FETCH_ITEMS],
+  computeAction
+};
 
-### stores implementation
-
-🏗️ currently improving this part
-
-### create stores
-
-First thing the `<App>` has to do is to instanciate all stores.
-They will be registered and will listen to all `dispatched` actions through the `Dispatcher`.
-
-```js
-import {useStores} from '@uralys/hookstores';
-import storeDescriptions from './stores-descriptions';
-
-const {createStores} = useStores();
-
-createStores(storeDescriptions);
+export default itemsStoreDescription;
+export {FETCH_ITEMS};
 ```
 
 ---
 
-### attach stores to containers props
+### create stores
 
-compose your containers with every store you need
+1 - First thing the `<App>` has to do is to instanciate all stores.
+
+They will be registered and will listen to all `dispatched` actions through the `Dispatcher`.
+
+2 - Compose your containers with every store you need
+
+Then, everytime they compute an action and update their state, they notify all connected containers.
 
 ```js
-import {withStore} from '@uralys/hookstores';
-import storeDescriptions from './stores-descriptions';
+import {useStores, withStore} from '@uralys/hookstores';
+import itemsStoreDescription from './features/items/store-description';
 
-const {ballsStore, itemsStore} = storeDescriptions;
+const storesDescriptions = [itemsStoreDescription];
+const {createStores} = useStores();
 
-const withItems = withStore(itemsStore);
-const withBalls = withStore(ballsStore);
+const App = () => {
+  const {createStores} = useStores();
+  createStores(storesDescriptions);
 
-const Balls = withBalls(BallsContainer);
-const Items = withItems(ItemsContainer);
-const ItemsAndBalls = withItems(withBalls(OtherContainer));
+  const ItemsWithStores = withStore(itemsStoreDescription)(ItemsContainer);
 
-return (
-  <>
-    <Balls />
-    <Items />
-    <ItemsAndBalls />
-  </>
-);
+  return <ItemsWithStores />;
+};
 ```
 
 ---
