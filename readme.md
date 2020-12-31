@@ -39,11 +39,15 @@ That being said,
 - ✅ so I prefer to have this package,
 - ✅ so why not sharing this experiment.
 
+---
+
 ## 📦 installation
 
 ```sh
 > npm i --save @uralys/hookstores
 ```
+
+---
 
 ## setup
 
@@ -107,6 +111,8 @@ const {createStores} = useStores();
 createStores(storeDescriptions);
 ```
 
+---
+
 ### attach stores to containers props
 
 compose your containers with every store you need
@@ -133,30 +139,37 @@ return (
 );
 ```
 
+---
+
 ### apply state changes to components props
 
-`subscribe` to store changes on component mounting
+use `connectStore` to register to store changes on component mounting.
 
 ```js
 import React, {useLayoutEffect, useState} from 'react';
 import ItemsComponent from './component';
-import {name as itemsStoreName} from 'path/to/items/store';
 
 const ItemsContainer = props => {
-  const [componentProps, setComponentProps] = useState();
-  const itemsStore = props[itemsStoreName];
+  const [items, setItems] = useState();
+  const {itemsStore} = props;
 
   useLayoutEffect(() => {
-    const mapStateToProps = (state, action) => {
-      setComponentProps({items: state.items});
+    const onStoreUpdate = storeState => {
+      setItems(storeState.items);
     };
 
-    itemsStore.subscribe(mapStateToProps);
+    const disconnect = connectStore(itemsStore, onStoreUpdate);
+
+    return disconnect;
   }, []);
 
-  return <ItemsComponent {...componentProps} />;
+  return <ItemsComponent items={items} />;
 };
 ```
+
+🔍 don't forget to return the `disconnect` function at the end of your hook, unless you may have stores updates triggering unmounted containers updates.
+
+---
 
 ### dispatch actions from containers
 
