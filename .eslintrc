@@ -15,6 +15,7 @@
     "dist"
   ],
   "globals": {
+    "process": true,
     "console": true,
     "window": true
   },
