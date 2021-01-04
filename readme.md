@@ -20,15 +20,21 @@
 
 The idea with `hookstores` is to implement a simple [Flux architecture](https://facebook.github.io/flux/docs/in-depth-overview)
 
-- ✅ **splitting** the the global state into **stores**,
+- ✅ **splitting** the global app state into **stores**,
 - ✅ applying **local rendering**, by mapping these stores to [containers](https://medium.com/@learnreact/container-components-c0e67432e005), using React hooks `useState` and `useEffect`.
-- ✅ using React context only to provide the `Dispatcher` everywhere, and `StoresProvider` who is emitting events to listeners of specific stores only.
+- ✅ using React context only to provide `Hookstores` with `{dispatch, ...stores}` everywhere,
+
+  - `dispatch` allows to emitting actions to every stores, and they now if they have to compute this action to reduce a new state.
+
+  - your `stores` are accessible, with the `key` you give in `descriptions`, to allow kind of "mapStateToProps" on the connected containers, only when there _is_ an update: Now that's local re-rendering.
 
 ## ☢️ disclaimer
 
 So yes, somehow it ends up as another lib to manage your React state 🙃.
 
 But since it's only few files you should understand what's behind the hood, then use and tweak them to your convenience _within your own React app_ rather than use it out of the box.
+
+You'll see hookstores is rather few lines to patch React.
 
 Furthermore,
 
@@ -46,44 +52,64 @@ That being said,
 ## 📦 installation
 
 ```sh
-> npm i --save @uralys/hookstores
+> npm i --save hookstores
 ```
 
 ---
 
-## setup
+## 🛠 setup
 
-use `Dispatcher` and `StoresProvider` context providers to compose your root `<App/>`
+Under the hood, the `Hookstores` uses [React Context](https://reactjs.org/docs/context.html).
+
+As such, you can wrap your root component, such as `App`, with the provider called `Hookstores` for convenience, to integrate it with your React app.
+
+```jsx
+<Hookstores>
+  <App />
+</Hookstores>
+```
+
+---
+
+In the following, let's illustrate how to use hookstores with:
+
+- a store of `Items` and its fetch function
+- a `container` plugged to this store,
+- and the `component` rendering the list of items.
+
+---
+
+### descriptions
+
+Hookstores will create stores, register for actions, and emit updates using the descriptions you provide.
+
+Each store has its own description, which must export:
+
+- an `initialState`,
+- a list of `handledActions`, from which this store needs to update its state.
+- a function `computeAction`, which is basically what redux calls a "reducer", computing a new store state as a reaction to each action.
 
 ```js
-import {Dispatcher, StoresProvider} from '@uralys/hookstores';
+const itemsStoreDescription = {
+  initialState: {},
+  handledActions: [],
+  computeAction: () => ({})
+};
+
+export default itemsStoreDescription;
 ```
 
-```html
-<Dispatcher>
-  <StoresProvider>
-    <App />
-  </StoresProvider>
-</Dispatcher>
-```
-
----
-
-## usage
-
-In the following, let's illustrate how to use hookstores with a store of `Items`, with a fetch function, a `container` plugged to this store, and the `component` rendering the list of items.
-
----
-
-### prepare descriptions
-
-Describe all your stores:
+🔍 When you describe many stores:
 
 - you should use one store for one feature (here the `items`)
 - define within `computeAction` how a store must update its state for every `handledAction`:
 
+Here is the example for our illustrating `itemsStore`:
+
 ```js
 /* ./features/items/store-description.js */
+import fetchItems from './fetch-items.js';
+
 const FETCH_ITEMS = 'FETCH_ITEMS';
 
 const computeAction = async (currentState, action) => {
@@ -103,7 +129,6 @@ const computeAction = async (currentState, action) => {
 };
 
 const itemsStoreDescription = {
-  name: 'itemsStore',
   initialState: {items: null},
   handledActions: [FETCH_ITEMS],
   computeAction
@@ -115,42 +140,36 @@ export {FETCH_ITEMS};
 
 ---
 
-### create stores
-
-1 - First thing the `<App>` has to do is to instanciate all stores.
-
-They will be registered and will listen to all `dispatched` actions through the `Dispatcher`.
-
-2 - Compose your containers with every store you need
-
-Then, everytime they compute an action and update their state, they notify all connected containers.
+Once all descriptions are ready, you give them names, and pass them as parameters to `<Hookstores>`
 
 ```js
-import {useStores, withStore} from '@uralys/hookstores';
-import itemsStoreDescription from './features/items/store-description';
+/* ./index.js */
 
-const storesDescriptions = [itemsStoreDescription];
-const {createStores} = useStores();
+import itemsStore from './features/items/store-description.js';
+import anyOtherStore from './features/whatever/store-description.js';
 
-const App = () => {
-  const {createStores} = useStores();
-  createStores(storesDescriptions);
-
-  const ItemsWithStores = withStore(itemsStoreDescription)(ItemsContainer);
-
-  return <ItemsWithStores />;
-};
+<Hookstores
+  descriptions={{
+    quizzesStore,
+    anyOtherStore
+  }}
+>
+  <App />
+</Hookstores>;
 ```
 
 ---
 
 ### apply state changes to components props
 
-use `connectStore` to register to store changes on component mounting.
+Use `connectStore` to register your container to store changes.
+
+Then map the store state to your component props, using your container state.
 
 ```js
 import React, {useLayoutEffect, useState} from 'react';
 import ItemsComponent from './component';
+import {connectStore} from 'hookstores';
 
 const ItemsContainer = props => {
   const [items, setItems] = useState();
@@ -170,19 +189,20 @@ const ItemsContainer = props => {
 };
 ```
 
-🔍 don't forget to return the `disconnect` function at the end of your hook, unless you may have stores updates triggering unmounted containers updates.
+🔍 Don't forget to return the `disconnect` function at the end of your hook, unless you will have stores updates triggering unmounted containers updates.
 
 ---
 
-### dispatch actions from containers
+### dispatching actions from containers
 
-use [`prop drilling`](https://kentcdodds.com/blog/prop-drilling) from your containers to your components: pass functions dispatching the actions
+Use [`prop drilling`](https://kentcdodds.com/blog/prop-drilling) from your containers to your components: pass functions dispatching the actions
 
 ```js
+import {useHookstores} from 'hookstores';
 import {SELECT_ITEM} from 'path/to/actions';
 
 const ItemsContainer = props => {
-  const {dispatch} = useDispatcher();
+  const {dispatch} = useHookstores();
 
   const selectItem = id => () => {
     dispatch({
@@ -191,7 +211,7 @@ const ItemsContainer = props => {
     });
   };
 
-  return <ItemsComponent selectItem={selectItem} {...componentProps} />;
+  return <ItemsComponent selectItem={selectItem} />;
 };
 ```
 
