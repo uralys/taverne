@@ -6,10 +6,6 @@
 
 ---
 
-## intro
-
----
-
 ## 📚 motivation
 
 - React is no more a `View` lib, it's now (v17) a complete framework: so either we pick a lighter lib for the `View`, or choosing React ❌ **we shouldn't need to use an additional external framework** such as Redux, MobX, RxJs, Recoil, Jotail...
@@ -32,24 +28,22 @@ The idea with `hookstores` is to implement a simple [Flux architecture](https://
 
 So yes, somehow it ends up as another lib to manage your React state 🙃.
 
-But since it's only few files you should understand what's behind the hood, then use and tweak them to your convenience _within your project_ rather than use it out of the box.
+But since it's only few files you should understand what's behind the hood, then use and tweak them to your convenience _within your own React app_ rather than use it out of the box.
 
 Furthermore,
 
-- 🔴 it's not written in typescript 🙀
-- 🔴 there are no tests 💥
+- ⚠️ it's not written in typescript 🙀
+- ⚠️ there are no tests 💥
 
 That being said,
 
-- ✅ I'm confidently using it between many apps now,
+- ✅ I'm confidently using this implementation between many apps,
 - ✅ so I prefer to have this package,
 - ✅ so why not sharing this experiment.
 
 ---
 
 ## 📦 installation
-
----
 
 ```sh
 > npm i --save @uralys/hookstores
@@ -58,8 +52,6 @@ That being said,
 ---
 
 ## setup
-
----
 
 use `Dispatcher` and `StoresProvider` context providers to compose your root `<App/>`
 
@@ -78,8 +70,6 @@ import {Dispatcher, StoresProvider} from '@uralys/hookstores';
 ---
 
 ## usage
-
----
 
 In the following, let's illustrate how to use hookstores with a store of `Items`, with a fetch function, a `container` plugged to this store, and the `component` rendering the list of items.
 
@@ -204,6 +194,8 @@ const ItemsContainer = props => {
   return <ItemsComponent selectItem={selectItem} {...componentProps} />;
 };
 ```
+
+---
 
 ## 🏗️ development
 
