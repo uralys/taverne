@@ -1,3 +1,5 @@
+// -----------------------------------------------------------------------------
+
 const connectStore = (store, onStoreUpdate) => {
   if (!store || !store.subscribe || !store.unsubscribe) {
     throw new Error(
@@ -15,5 +17,7 @@ const connectStore = (store, onStoreUpdate) => {
     store.unsubscribe(onStoreUpdate);
   };
 };
+
+// -----------------------------------------------------------------------------
 
 export default connectStore;
