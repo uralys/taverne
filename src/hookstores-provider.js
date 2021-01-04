@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 
 import React, {createContext, useContext} from 'react';
-import createStore from './lib/create-store';
+import createStore from './create-store';
 
 // -----------------------------------------------------------------------------
 
