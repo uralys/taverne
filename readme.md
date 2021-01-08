@@ -17,10 +17,15 @@
 - That would eventually lead to lots of specific `useMemo` on every component requiring performance optimisation.
   So rather than to put the effort on developping on a proper state/component architecture, your effort will be spent on ❌ **writing those `useMemo` everywhere**.
 
+- Eventually, all these steps lead me to `RxJs` which allows the use of **many stores**, by subscribing to their updates on `useEffect` and applying changes with `useState` I would have this **local rerendering** I want.
+  ❌ Well, that would mean adding a third party lib, and I'd like not to.
+
 ## 🧙 experimentation
 
-The idea with `Hookstores` is to implement a simple [Flux architecture](https://facebook.github.io/flux/docs/in-depth-overview)
+The idea with `Hookstores` is
 
+- ✅ to stay within React **only**,
+- ✅ to implement a simple [Flux architecture](https://facebook.github.io/flux/docs/in-depth-overview)
 - ✅ **splitting** the global app state into **stores** states,
 - ✅ applying **local rendering**, by mapping these stores states to [containers](https://medium.com/@learnreact/container-components-c0e67432e005), using React hooks `useState` and `useEffect`.
 - ✅ using React context only to provide `Hookstores` with `{dispatch, ...stores}` everywhere,
