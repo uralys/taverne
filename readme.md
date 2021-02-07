@@ -12,17 +12,13 @@
 
 ## 📚 motivation
 
-read this [doc]('docs/motivation.md')
-
----
+read this [doc](docs/motivation.md)
 
 ## 📦 installation
 
 ```sh
 > npm i --save hookstores
 ```
-
----
 
 ## 🛠 setup
 
@@ -219,4 +215,4 @@ useLayoutEffect(() => {
 
 ## 🏗️ development
 
-local dev [tips](dev.md)
+local dev [tips](docs/dev.md)
