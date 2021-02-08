@@ -143,11 +143,8 @@ createStores({
 
 ## 3: storeState ➡️ props
 
-- Retrieve the store to connect provided by `useStores`.
-- Use `connectStore` to register your container to store changes.
-- Then map the store state to your component props, using your container state.
-
-Here is the example for our illustrating `itemsStore`
+Listen to specific changes in a store for your local props by using the `useStore` hook.
+Here is the example for our illustrating `itemsStore`, listening for updates on `store.items`
 
 ```js
 /* ./features/items/container.js */
@@ -174,7 +171,7 @@ Use [`prop drilling`](https://kentcdodds.com/blog/prop-drilling) from your conta
 
 ```js
 import {dispatch} from 'hookstores';
-import {SELECT_ITEM} from 'path/to/actions';
+import {SELECT_ITEM} from './features/items/store-description.js';
 
 const ItemsContainer = props => {
   const selectItem = id => () => {
