@@ -10,6 +10,22 @@
 
 ---
 
+## 🎨 idea
+
+On every store update, specific props will be extracted for the components, and nothing else: this will allow accurate local rendering from a global app state.
+
+```js
+const propsMapping = {
+  items: 'path.to.items.within.your.store',
+  other: 'plop'
+};
+
+const ItemsContainer = props => {
+  const {items} = useStore('itemsStore', propsMapping);
+  return <ItemsComponent items={items} other={other} />;
+};
+```
+
 ## 📚 motivation
 
 read this [doc](docs/motivation.md)
@@ -130,41 +146,25 @@ createStores({
 - Retrieve the store to connect provided by `useStores`.
 - Use `connectStore` to register your container to store changes.
 - Then map the store state to your component props, using your container state.
-<details>
-<summary>Example</summary>
 
 Here is the example for our illustrating `itemsStore`
 
 ```js
 /* ./features/items/container.js */
 
-import React, {useLayoutEffect, useState} from 'react';
+import React from 'react';
 import ItemsComponent from './component';
-import {connectStore, useStores} from 'hookstores';
+import {useStore} from 'hookstores';
+
+const propsMapping = {
+  items: 'items'
+};
 
 const ItemsContainer = props => {
-  const [items, setItems] = useState();
-  const {itemsStore} = useStores();
-
-  useLayoutEffect(() => {
-    const onStoreUpdate = storeState => {
-      setItems(storeState.items);
-    };
-
-    const disconnect = connectStore(itemsStore, onStoreUpdate);
-
-    return disconnect;
-  }, []);
-
+  const {items} = useStore('itemsStore', propsMapping);
   return <ItemsComponent items={items} />;
 };
 ```
-
-## </details>
-
----
-
-🔍 Don't forget to return the `disconnect` function at the end of your hook, unless you will have stores updates triggering unmounted containers updates.
 
 ---
 
@@ -173,12 +173,10 @@ const ItemsContainer = props => {
 Use [`prop drilling`](https://kentcdodds.com/blog/prop-drilling) from your containers to your components: pass functions dispatching the actions
 
 ```js
-import {useStores} from 'hookstores';
+import {dispatch} from 'hookstores';
 import {SELECT_ITEM} from 'path/to/actions';
 
 const ItemsContainer = props => {
-  const {dispatch} = useStores();
-
   const selectItem = id => () => {
     dispatch({
       type: SELECT_ITEM,
@@ -188,27 +186,6 @@ const ItemsContainer = props => {
 
   return <ItemsComponent selectItem={selectItem} />;
 };
-```
-
----
-
-## ➕ Advanced
-
-You can use `store.getState()` to get any current store state and act depending on it.
-
-For example, in this example we fetch the items on container mounting, if they are not already fetched:
-
-```js
-/* ./features/items/container.js */
-
-const {itemsStore} = props;
-
-useLayoutEffect(() => {
-  const currentStoreState = itemsStore.getState();
-  if (!itemsStore.items) {
-    dispatch({type: FETCH_ITEMS});
-  }
-}, []);
 ```
 
 ---

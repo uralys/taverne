@@ -23,11 +23,8 @@ The idea with `Hookstores` is
 - ✅ to implement a simple [Flux architecture](https://facebook.github.io/flux/docs/in-depth-overview)
 - ✅ **splitting** the global app state into **stores** states,
 - ✅ applying **local rendering**, by mapping these stores states to [containers](https://medium.com/@learnreact/container-components-c0e67432e005), using React hooks `useState` and `useEffect`.
-- ✅ using React hooks to create the stores on app startup, then access `{dispatch, ...stores} = useStores()` everywhere:
-
-  - `dispatch` allowing to emit actions to every store, and they now if they have to compute this action to reduce a new state.
-
-  - your `stores` are accessible, with the `key` you give in `descriptions`, to allow kind of "mapStateToProps" on the connected containers, only when there _is_ an update: Now that's local re-rendering.
+- ✅ creating the stores on app startup, then using React hooks to access `{props} = useStore('myStore', propsMapping)` anywhere, with the dedicated "storeState to props", only updated when there _is_ an update on this store: Now that's local re-rendering.
+- ✅ unsing `dispatch` to emit actions to every store, and they now if they have to compute this action to reduce a new state.
 
 ## ☢️ disclaimer
 
