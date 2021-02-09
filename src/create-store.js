@@ -34,6 +34,7 @@ const createStore = (storeKey, storeDescription) => {
   console.log('☢️ [hookstores] creating store', storeKey);
   let state = initialState;
   const subscriptions = [];
+  const getState = () => state;
 
   // -------------------------------------------------
   // computeAction is async, it will update storeState onSuccess
@@ -47,7 +48,7 @@ const createStore = (storeKey, storeDescription) => {
   // -------------------------------------------------
 
   const compute = createComputer(
-    () => state,
+    getState,
     subscriptions,
     storeKey,
     storeDescription
@@ -57,13 +58,17 @@ const createStore = (storeKey, storeDescription) => {
 
   const store = {
     storeKey,
-    getState: () => state,
+    getState,
     onDispatch: action => {
       if (action.scope && action.scope !== storeKey) {
         console.log(`🏪 [hookstores] ${storeKey} out of scope`);
         return;
       }
-      state = compute(action);
+
+      const newState = compute(action);
+      if (newState) {
+        state = newState;
+      }
     },
     subscribe: subscription => {
       console.log(`✅ [hookstores] adding a subscription to ${storeKey}`);

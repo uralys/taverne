@@ -63,9 +63,12 @@ const useStore = (storeKey, propsMapping) => {
   const store = stores[storeKey];
 
   if (!store) {
-    const knownKeys = Object.keys(stores).join(',');
+    const registeredStores = Object.keys(stores).join(',');
     throw new Error(
-      `🔴 store "${storeKey}" was not found within your stores. Available keys: [${knownKeys}].`
+      `🔴 "${storeKey}" was not found within your stores.
+      Be sure to register all your store-descriptions with createStores(), before to render the React app.
+      Registered stores: [${registeredStores}].
+      `
     );
   }
 
@@ -73,6 +76,7 @@ const useStore = (storeKey, propsMapping) => {
   const onUpdate = createUpdater(propsMapping, setProps);
 
   useIsoLayoutEffect(() => {
+    console.log(`☢️ [hookstores] connecting store ${storeKey}`);
     const disconnect = connectStore(store, onUpdate);
     return disconnect;
   }, []);
