@@ -17,8 +17,9 @@ const createComputer = (
   const currentState = getState();
 
   computeAction(currentState, action).then(newState => {
-    subscriptions.forEach(subscription => {
-      subscription(newState, action);
+    const previousState = currentState;
+    subscriptions.forEach(onUpdate => {
+      onUpdate(newState, previousState, action);
     });
 
     console.log(

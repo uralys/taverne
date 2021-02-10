@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 
-import resolve from '@rollup/plugin-node-resolve';
-import babel from '@rollup/plugin-babel';
+// import resolve from '@rollup/plugin-node-resolve';
+// import babel from '@rollup/plugin-babel';
 
 // -----------------------------------------------------------------------------
 
@@ -12,12 +12,12 @@ const NAME = 'hookstores';
 const common = {
   input: 'src/index.js',
   plugins: [
-    resolve({
-      moduleDirectories: ['node_modules']
-    }),
-    babel({babelHelpers: 'bundled'})
+    // resolve({
+    //   moduleDirectories: ['node_modules']
+    // }),
+    // babel({babelHelpers: 'bundled'})
   ],
-  external: ['react']
+  external: ['react', 'deep-equal']
 };
 
 // -----------------------------------------------------------------------------

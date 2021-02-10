@@ -1,5 +1,6 @@
 // -----------------------------------------------------------------------------
 
+import deepEqual from 'deep-equal';
 import {useEffect, useLayoutEffect, useState} from 'react';
 import createStore from './create-store';
 import connectStore from './connect-store';
@@ -42,16 +43,26 @@ const createStores = descriptions => {
 
 // -----------------------------------------------------------------------------
 
-const createUpdater = (propsMapping, setProps) => {
-  const onUpdate = storeState => {
-    const newProps = Object.keys(propsMapping).reduce((acc, property) => {
-      return {
-        ...acc,
-        [property]: get(propsMapping[property], storeState)
-      };
-    }, {});
+const mapStateToProps = (state, propsMapping) =>
+  Object.keys(propsMapping).reduce(
+    (acc, property) => ({
+      ...acc,
+      [property]: get(propsMapping[property], state)
+    }),
+    {}
+  );
 
-    setProps(newProps);
+// -----------------------------------------------------------------------------
+
+const createUpdater = (propsMapping, setProps) => {
+  // eslint-disable-next-line no-unused-vars
+  const onUpdate = (storeState, previousState) => {
+    const prevProps = mapStateToProps(previousState, propsMapping);
+    const newProps = mapStateToProps(storeState, propsMapping);
+
+    if (!deepEqual(newProps, prevProps)) {
+      setProps(newProps);
+    }
   };
 
   return onUpdate;
