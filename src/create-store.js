@@ -18,13 +18,10 @@ const createComputer = (
 
   computeAction(currentState, action).then(newState => {
     const previousState = currentState;
+
     subscriptions.forEach(onUpdate => {
       onUpdate(newState, previousState, action);
     });
-
-    console.log(
-      `🏪 [hookstores] ${storeKey} successfully notified all containers after ${action.type}`
-    );
   });
 };
 

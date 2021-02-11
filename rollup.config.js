@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 
 // import resolve from '@rollup/plugin-node-resolve';
-// import babel from '@rollup/plugin-babel';
+import babel from '@rollup/plugin-babel';
 
 // -----------------------------------------------------------------------------
 
@@ -15,7 +15,7 @@ const common = {
     // resolve({
     //   moduleDirectories: ['node_modules']
     // }),
-    // babel({babelHelpers: 'bundled'})
+    babel({babelHelpers: 'bundled'})
   ],
   external: ['react', 'deep-equal']
 };
