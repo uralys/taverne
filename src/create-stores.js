@@ -49,7 +49,7 @@ const createUseStore = stores =>
       const registeredStores = Object.keys(stores).join(',');
       throw new Error(
         `🔴 "${storeKey}" was not found within your stores.
-      Be sure to register all your store-descriptions with createStores(), before to render the React app.
+      Be sure to register all your descriptions with the <Hookstores> provider, wrapping your the React <App>.
       Registered stores: [${registeredStores}].
       `
       );
