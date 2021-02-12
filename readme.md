@@ -21,6 +21,7 @@ const propsMapping = {
 };
 
 const ItemsContainer = props => {
+  const {useStore} = useHookstores();
   const {items} = useStore('itemsStore', propsMapping);
   return <ItemsComponent items={items} other={other} />;
 };
@@ -35,6 +36,30 @@ read this [doc](docs/motivation.md)
 ```sh
 > npm i --save hookstores
 ```
+
+Then wrap your React app with the context Provider:
+
+```js
+import React from 'react';
+import {render} from 'react-dom';
+import {Hookstores} from 'hookstores';
+
+render(
+  <Hookstores descriptions={descriptions}>
+    <App />
+  </Hookstores>,
+  container
+);
+```
+
+<details>
+<summary>💡 why use React context ?</summary>
+
+We _could_ use `{dispatch, useStore}` from a module, but that would disable the possibility to run multiple Apps in the same page.
+
+So rather using `React.context` to scope your stores in an `<App/>`.
+
+</details>
 
 ## 🛠 setup
 
@@ -123,20 +148,30 @@ export {FETCH_ITEMS};
 
 ---
 
-## 2 🏁 creating the stores on startup
+## 2 🏁 setup the Hookstores provider with these descriptions
 
 Once all descriptions are ready, you give them names, and pass them as parameters to `createStores()`
 
 ```js
 /* ./index.js */
+import React from 'react';
+import {render} from 'react-dom';
+import {Hookstores} from 'hookstores';
 
 import itemsStore from './features/items/store-description.js';
 import anyOtherStore from './features/whatever/store-description.js';
 
-createStores({
-  itemsStore,
-  anyOtherStore
-});
+render(
+  <Hookstores
+    descriptions={{
+      itemsStore,
+      anyOtherStore
+    }}
+  >
+    <App />
+  </Hookstores>,
+  container
+);
 ```
 
 ---
@@ -151,13 +186,13 @@ Here is the example for our illustrating `itemsStore`, listening for updates on 
 
 import React from 'react';
 import ItemsComponent from './component';
-import {useStore} from 'hookstores';
 
 const propsMapping = {
   items: 'items'
 };
 
 const ItemsContainer = props => {
+  const {useStore} = useHookstores();
   const {items} = useStore('itemsStore', propsMapping);
   return <ItemsComponent items={items} />;
 };
@@ -170,10 +205,11 @@ const ItemsContainer = props => {
 Use [`prop drilling`](https://kentcdodds.com/blog/prop-drilling) from your containers to your components: pass functions dispatching the actions
 
 ```js
-import {dispatch} from 'hookstores';
 import {SELECT_ITEM} from './features/items/store-description.js';
 
 const ItemsContainer = props => {
+  const {dispatch} = useHookstores();
+
   const selectItem = id => () => {
     dispatch({
       type: SELECT_ITEM,
