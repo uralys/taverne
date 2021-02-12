@@ -27,7 +27,6 @@ const mapStateToProps = (state, propsMapping) =>
 // -----------------------------------------------------------------------------
 
 const createUpdater = (propsMapping, setProps) => {
-  // eslint-disable-next-line no-unused-vars
   const onUpdate = (storeState, previousState) => {
     const prevProps = mapStateToProps(previousState, propsMapping);
     const newProps = mapStateToProps(storeState, propsMapping);

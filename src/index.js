@@ -14,7 +14,7 @@ const useHookstores = () => {
 
   if (!context) {
     throw new Error(
-      `❌ [hookstores] useDispatch must be used within a provider <Hookstores>`
+      `❌ [hookstores] useHookstores must be used within a provider <Hookstores>`
     );
   }
 
