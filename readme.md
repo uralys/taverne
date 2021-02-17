@@ -31,21 +31,13 @@ render(
 );
 ```
 
-<details>
-<summary>💡 why use React context ?</summary>
-
-We _could_ use `{dispatch, useStore}` from a module, but that would disable the possibility to run multiple Apps in the same page.
-
-So rather using `React.context` to scope your stores in an `<App/>`.
-
-</details>
-
 ---
 
 ## 🎨 idea
 
 - `Hookstores` allows to organize your React app State in one or many stores.
-- access local parts of this global state with `hooks`
+- Access local parts of this global state with `hooks`
+- You can listen to specific parts of specific stores, to allow accurate local rendering from your global app state (see the [advanced section](#-advanced-usage)).
 
 ```js
 const ItemsContainer = props => {
@@ -55,8 +47,6 @@ const ItemsContainer = props => {
   return <ItemsComponent items={items} />;
 };
 ```
-
-- You can listen to specific parts of specific stores, to allow accurate local rendering from your global app state (see the [advanced section](#--advanced-usage)).
 
 ---
 
@@ -177,8 +167,9 @@ render(
 
 ## storeState ➡️ props
 
-Listen to specific changes in a store for your local props by using the `useStore` hook.
-Here is the example for our illustrating `itemsStore`, listening for updates on `store.items`
+Listen to changes in a store and use in your local props by using the `useXxxxStore` hook that was created for your store.
+
+Here is the example for our illustrating `itemsStore`:
 
 ```js
 /* ./features/items/container.js */
@@ -186,16 +177,15 @@ Here is the example for our illustrating `itemsStore`, listening for updates on 
 import React from 'react';
 import ItemsComponent from './component';
 
-const propsMapping = {
-  items: 'items'
-};
-
 const ItemsContainer = props => {
-  const {useStore} = useHookstores();
-  const {items} = useStore('itemsStore', propsMapping);
+  const {useItemsStore} = useHookstores();
+  const {items} = useItemsStore();
+
   return <ItemsComponent items={items} />;
 };
 ```
+
+To listen to specific changes in a store, and update your local props only on those changes, use `propsMapping` (see the [advanced section](#-advanced-usage)).
 
 ---
 
@@ -241,8 +231,8 @@ Now your `props` will change only when one of these mapping is updated in the st
 
 ```js
 const ItemsContainer = props => {
-  const {useStore} = useHookstores();
-  const {items, other} = useStore('itemsStore', propsMapping);
+  const {useItemsStore} = useHookstores();
+  const {items, other} = useItemsStore(propsMapping);
 
   return <ItemsComponent items={items} other={other} />;
 };
