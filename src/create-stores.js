@@ -15,8 +15,12 @@ const useIsoLayoutEffect =
 
 // -----------------------------------------------------------------------------
 
-const mapStateToProps = (state, propsMapping) =>
-  Object.keys(propsMapping).reduce(
+const mapStateToProps = (state, propsMapping = null) => {
+  if (!propsMapping) {
+    return state;
+  }
+
+  const selectedProps = Object.keys(propsMapping).reduce(
     (acc, property) => ({
       ...acc,
       [property]: get(propsMapping[property], state)
@@ -24,9 +28,12 @@ const mapStateToProps = (state, propsMapping) =>
     {}
   );
 
+  return selectedProps;
+};
+
 // -----------------------------------------------------------------------------
 
-const createUpdater = (propsMapping, setProps) => {
+const createUpdater = (setProps, propsMapping = null) => {
   const onUpdate = (storeState, previousState) => {
     const prevProps = mapStateToProps(previousState, propsMapping);
     const newProps = mapStateToProps(storeState, propsMapping);
@@ -41,31 +48,30 @@ const createUpdater = (propsMapping, setProps) => {
 
 // -----------------------------------------------------------------------------
 
-const createUseStore = stores =>
-  function extract(storeKey, propsMapping) {
-    const store = stores[storeKey];
-
-    if (!store) {
-      const registeredStores = Object.keys(stores).join(',');
-      throw new Error(
-        `🔴 "${storeKey}" was not found within your stores.
-      Be sure to register all your descriptions with the <Hookstores> provider, wrapping your the React <App>.
-      Registered stores: [${registeredStores}].
-      `
-      );
-    }
-
+const createUseStore = store =>
+  function useStore(propsMapping = null) {
     const [props, setProps] = useState({});
-    const onUpdate = createUpdater(propsMapping, setProps);
+    const onUpdate = createUpdater(setProps, propsMapping);
 
     useIsoLayoutEffect(() => {
-      console.log(`☢️ [hookstores] connecting store ${storeKey}`);
+      console.log(`☢️ [hookstores] connecting store ${store.storeKey}`);
       const disconnect = connectStore(store, onUpdate);
       return disconnect;
     }, []);
 
     return {...props};
   };
+
+// -----------------------------------------------------------------------------
+
+const createHooks = stores =>
+  Object.keys(stores).reduce(
+    (acc, storeKey) => ({
+      ...acc,
+      [`use${storeKey}`]: createUseStore(stores[storeKey])
+    }),
+    {}
+  );
 
 // -----------------------------------------------------------------------------
 
@@ -92,9 +98,9 @@ const createStores = descriptions => {
   }, {});
 
   const dispatch = createDispatch(stores);
-  const useStore = createUseStore(stores);
+  const hooks = createHooks(stores);
 
-  return {dispatch, useStore, stores};
+  return {dispatch, ...hooks, stores};
 };
 
 // -----------------------------------------------------------------------------

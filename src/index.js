@@ -24,10 +24,10 @@ const useHookstores = () => {
 // -----------------------------------------------------------------------------
 
 const Hookstores = ({descriptions, children}) => {
-  const {useStore, dispatch} = createStores(descriptions);
+  const {dispatch, ...hooks} = createStores(descriptions);
 
   return (
-    <HookstoresContext.Provider value={{dispatch, useStore}}>
+    <HookstoresContext.Provider value={{dispatch, ...hooks}}>
       {children}
     </HookstoresContext.Provider>
   );
