@@ -10,27 +10,6 @@
 
 ---
 
-## 🎨 idea
-
-On every store update, specific props will be extracted for the components, and nothing else: this will allow accurate local rendering from a global app state.
-
-```js
-const propsMapping = {
-  items: 'path.to.items.within.your.store',
-  other: 'plop'
-};
-
-const ItemsContainer = props => {
-  const {useStore} = useHookstores();
-  const {items} = useStore('itemsStore', propsMapping);
-  return <ItemsComponent items={items} other={other} />;
-};
-```
-
-## 📚 motivation
-
-read this [doc](docs/motivation.md)
-
 ## 📦 installation
 
 ```sh
@@ -61,6 +40,26 @@ So rather using `React.context` to scope your stores in an `<App/>`.
 
 </details>
 
+---
+
+## 🎨 idea
+
+- `Hookstores` allows to organize your React app State in one or many stores.
+- access local parts of this global state with `hooks`
+
+```js
+const ItemsContainer = props => {
+  const {useItemsStore} = useHookstores();
+  const {items} = useItemsStore();
+
+  return <ItemsComponent items={items} />;
+};
+```
+
+- You can listen to specific parts of specific stores, to allow accurate local rendering from your global app state (see the [advanced section](#--advanced-usage)).
+
+---
+
 ## 🛠 setup
 
 Here is the path to follow to setup Hookstores on your app:
@@ -80,7 +79,7 @@ In the following, let's illustrate how to use `Hookstores` with:
 
 ---
 
-## 1 ✍️ descriptions
+## ✍️ descriptions
 
 `Hookstores` will create stores, register for actions, and emit updates using the descriptions you provide.
 
@@ -148,7 +147,7 @@ export {FETCH_ITEMS};
 
 ---
 
-## 2 🏁 setup the Hookstores provider with these descriptions
+## 🏁 setup the Hookstores provider with these descriptions
 
 Once all descriptions are ready, you give them names, and pass them as parameters to `createStores()`
 
@@ -176,7 +175,7 @@ render(
 
 ---
 
-## 3: storeState ➡️ props
+## storeState ➡️ props
 
 Listen to specific changes in a store for your local props by using the `useStore` hook.
 Here is the example for our illustrating `itemsStore`, listening for updates on `store.items`
@@ -200,7 +199,7 @@ const ItemsContainer = props => {
 
 ---
 
-## 4 📡 dispatching actions
+## 📡 dispatching actions
 
 Use [`prop drilling`](https://kentcdodds.com/blog/prop-drilling) from your containers to your components: pass functions dispatching the actions
 
@@ -222,6 +221,40 @@ const ItemsContainer = props => {
 ```
 
 ---
+
+## 🔥 advanced usage
+
+The whole point of `Hookstores` is to be able to perform extremely local rendering.
+
+So, rather than the listening for the whole state updates, you can update rendering depending on specific updates in a store.
+
+To do so, specify the `props` mapping you want to listen for changes, telling corresponding paths in your store.
+
+```js
+const propsMapping = {
+  items: 'path.to.items.within.your.store',
+  other: 'plop'
+};
+```
+
+Now your `props` will change only when one of these mapping is updated in the store.
+
+```js
+const ItemsContainer = props => {
+  const {useStore} = useHookstores();
+  const {items, other} = useStore('itemsStore', propsMapping);
+
+  return <ItemsComponent items={items} other={other} />;
+};
+```
+
+This way, on every store update, specific props will be extracted for the components, and nothing else: this will allow accurate local rendering from a global app state.
+
+---
+
+## 📚 motivation
+
+read this [doc](docs/motivation.md)
 
 ## 🏗️ development
 

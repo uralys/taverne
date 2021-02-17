@@ -13,34 +13,19 @@
   ❌ Well, that would mean adding a third party lib, and I'd like not to.
 
 - Finally, I've come accross [zustand](https://github.com/pmndrs/zustand), which resolves all these previous points and use React hooks only !
-  That is the lib **the closest** to the way I want to manage my state, but ❌ I want to keep my redux-like reducers, actions and container connect function to map my stores locally to the required props for the finest re-rendering, and no extra-recipes (back to point 1)
+
+  - That is the lib **the closest** to the way I want to manage my state, but ❌ I want to keep my redux-like reducers, actions and container connect function to map my stores locally to the required props for the finest re-rendering, and no extra-recipes (back to point 1)
+
+  - Try to instanciate twice your app with `zustand`: ❌ your stores are not scoped, you need to scope them manually. That's where a React context Provider is useful, and I chose to wrap my React app with a Provider to use many `Hookstores` in different apps in one single page.
 
 ## 🧙 experimentation
 
-The idea with `Hookstores` is
+The idea with `Hookstores` is:
 
 - ✅ to stay within React **only**,
 - ✅ to implement a simple [Flux architecture](https://facebook.github.io/flux/docs/in-depth-overview)
 - ✅ **splitting** the global app state into **stores** states,
 - ✅ applying **local rendering**, by mapping these stores states to [containers](https://medium.com/@learnreact/container-components-c0e67432e005), using React hooks `useState` and `useEffect`.
-- ✅ creating the stores on app startup, then using React hooks to access `{props} = useStore('myStore', propsMapping)` anywhere, with the dedicated "storeState to props", only updated when there _is_ an update on this store: Now that's local re-rendering.
-- ✅ unsing `dispatch` to emit actions to every store, and they now if they have to compute this action to reduce a new state.
-
-## ☢️ disclaimer
-
-So yes, somehow it ends up as another lib to manage your React state 🙃.
-
-But since it's only few files you should understand what's behind the hood, then use and tweak them to your convenience _within your own React app_ rather than use it out of the box.
-
-You'll see `Hookstores` is rather few lines to **patch** React.
-
-Furthermore,
-
-- ⚠️ it's not written in typescript 🙀
-- ⚠️ there are no tests 💥
-
-That being said,
-
-- ✅ I'm confidently using this implementation between many apps,
-- ✅ so I prefer to have this package,
-- ✅ so why not sharing this experiment.
+- ✅ creating the stores on app startup, then using React hooks to access `{...props} = useMyStore()` anywhere,
+- ✅ add `propsMapping` to update `props` only when there _is_ an update on this store: Now that's local re-rendering.
+- ✅ using `dispatch` to emit actions to every store, and they now if they have to compute this action to reduce a new state.
