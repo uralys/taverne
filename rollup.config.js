@@ -1,9 +1,12 @@
 // -----------------------------------------------------------------------------
 
-// https://github.com/mjeanroy/rollup-plugin-license
 import babel from '@rollup/plugin-babel';
 import {terser} from 'rollup-plugin-terser';
 import license from 'rollup-plugin-license';
+
+// -----------------------------------------------------------------------------
+
+import packageJSON from './package.json';
 
 // -----------------------------------------------------------------------------
 
@@ -17,7 +20,7 @@ const common = {
     babel({babelHelpers: 'bundled'}),
     license({
       banner: `
-        hookstores
+        hookstores v${packageJSON.version}
         (c) Uralys, Christophe Dugne-Esquevin
         @license MIT
     `
