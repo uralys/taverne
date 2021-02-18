@@ -1,7 +1,9 @@
 // -----------------------------------------------------------------------------
 
-// import resolve from '@rollup/plugin-node-resolve';
+// https://github.com/mjeanroy/rollup-plugin-license
 import babel from '@rollup/plugin-babel';
+import {terser} from 'rollup-plugin-terser';
+import license from 'rollup-plugin-license';
 
 // -----------------------------------------------------------------------------
 
@@ -12,10 +14,14 @@ const NAME = 'hookstores';
 const common = {
   input: 'src/index.js',
   plugins: [
-    // resolve({
-    //   moduleDirectories: ['node_modules']
-    // }),
-    babel({babelHelpers: 'bundled'})
+    babel({babelHelpers: 'bundled'}),
+    license({
+      banner: `
+        hookstores
+        (c) Uralys, Christophe Dugne-Esquevin
+        @license MIT
+    `
+    })
   ],
   external: ['react', 'deep-equal']
 };
@@ -37,7 +43,8 @@ const cjs = [
     output: {
       file: `dist/cjs/${NAME}.min.js`,
       sourcemap: true,
-      format: 'cjs'
+      format: 'cjs',
+      plugins: [terser()]
     }
   }
 ];
