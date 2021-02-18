@@ -3,6 +3,7 @@
   "version": "1.5.2",
   "description": "Elementary Flux implementation using React hooks",
   "repository": "https://github.com/uralys/hookstores",
+  "license": "MIT",
   "keywords": [
     "flux",
     "react",

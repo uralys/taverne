@@ -1,3 +1,8 @@
+/*
+hookstores
+(c) Uralys, Christophe Dugne-Esquevin
+@license MIT
+*/
 // -----------------------------------------------------------------------------
 
 import React, {createContext, useContext} from 'react';
