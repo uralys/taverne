@@ -1,16 +1,38 @@
 // -----------------------------------------------------------------------------
 
 import babel from '@rollup/plugin-babel';
+import {nodeResolve} from '@rollup/plugin-node-resolve';
 import {terser} from 'rollup-plugin-terser';
 import license from 'rollup-plugin-license';
 
 // -----------------------------------------------------------------------------
 
-import packageJSON from './package.json';
+import pkg from './package.json';
 
 // -----------------------------------------------------------------------------
 
 const NAME = 'hookstores';
+const banner = `
+  hookstores v${pkg.version}
+  (c) Uralys, Christophe Dugne-Esquevin
+  https://github.com/uralys/hookstores
+  @license MIT
+
+  immer
+  (c) 2017 Michel Weststrate
+  https://github.com/immerjs/immer
+  @license MIT
+
+  React
+  (c) Facebook, Inc. and its affiliates.
+  https://github.com/facebook/react
+  @license MIT
+
+  deep-equal
+  (c) 2012, 2013, 2014 James Halliday <mail@substack.net>, 2009 Thomas Robinson <280north.com>
+  https://github.com/inspect-js/node-deep-equal
+  @license MIT
+`;
 
 // -----------------------------------------------------------------------------
 
@@ -18,13 +40,8 @@ const common = {
   input: 'src/index.js',
   plugins: [
     babel({babelHelpers: 'bundled'}),
-    license({
-      banner: `
-        hookstores v${packageJSON.version}
-        (c) Uralys, Christophe Dugne-Esquevin
-        @license MIT
-    `
-    })
+    nodeResolve({resolveOnly: ['immer']}),
+    license({banner})
   ],
   external: ['react', 'deep-equal']
 };
@@ -65,17 +82,7 @@ const esm = [
 
 // -----------------------------------------------------------------------------
 
-let config;
-switch (process.env.BUILD_ENV) {
-  case 'cjs':
-    config = cjs;
-    break;
-  case 'esm':
-    config = esm;
-    break;
-  default:
-    config = cjs.concat(esm);
-}
+const config = cjs.concat(esm);
 
 // -----------------------------------------------------------------------------
 

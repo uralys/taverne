@@ -87,6 +87,11 @@ const createHooks = stores =>
 const createDispatch = stores =>
   function dispatch(action) {
     console.log('📡 [hookstores] dispatching', action);
+
+    if (!action.type) {
+      throw new Error(`❌ [hookstores] dispatch: action.type is required`);
+    }
+
     Object.keys(stores).forEach(storeKey => {
       stores[storeKey].onDispatch(action);
     });

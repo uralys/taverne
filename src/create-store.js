@@ -1,56 +1,34 @@
 // -----------------------------------------------------------------------------
 
-const createComputer = (
-  getState,
-  subscriptions,
-  storeKey,
-  storeDescription
-) => action => {
-  const {handledActions, computeAction} = storeDescription;
-
-  if (!handledActions.includes(action.type)) {
-    return;
-  }
-
-  console.log(`🏪 [hookstores] ${storeKey} computes action`, action.type);
-
-  const currentState = getState();
-
-  computeAction(currentState, action).then(newState => {
-    const previousState = currentState;
-
-    subscriptions.forEach(onUpdate => {
-      onUpdate(newState, previousState, action);
-    });
-  });
-};
+import {produce} from 'immer';
 
 // -----------------------------------------------------------------------------
 
 const createStore = (storeKey, storeDescription) => {
-  const {initialState} = storeDescription;
   console.log('☢️ [hookstores] creating store', storeKey);
+
+  const {initialState, middlewares} = storeDescription;
+
+  // -------------------------------------------------
+
   let state = initialState;
   const subscriptions = [];
   const getState = () => state;
 
   // -------------------------------------------------
-  // computeAction is async, it will update storeState onSuccess
 
-  const storeStateUpdate = newState => {
+  const applyReducer = (reduce, payload) => {
+    const previousState = getState();
+    const newState = produce(previousState, draftState =>
+      reduce(draftState, payload)
+    );
+
     state = newState;
+
+    subscriptions.forEach(onUpdate => {
+      onUpdate(newState, previousState);
+    });
   };
-
-  subscriptions.push(storeStateUpdate);
-
-  // -------------------------------------------------
-
-  const compute = createComputer(
-    getState,
-    subscriptions,
-    storeKey,
-    storeDescription
-  );
 
   // -------------------------------------------------
 
@@ -58,15 +36,25 @@ const createStore = (storeKey, storeDescription) => {
     storeKey,
     getState,
     onDispatch: action => {
-      if (action.scope && action.scope !== storeKey) {
-        console.log(`🏪 [hookstores] ${storeKey} out of scope`);
-        return;
-      }
+      const {type, ...payload} = action;
 
-      const newState = compute(action);
-      if (newState) {
-        state = newState;
-      }
+      middlewares.forEach(({on, perform, reduce}) => {
+        if (on === type) {
+          if (typeof perform === 'function') {
+            const result = perform(payload, getState);
+            if (result.then) {
+              console.log('has a then, it;s a promise');
+              result.then(_payload => {
+                applyReducer(reduce, _payload);
+              });
+            } else {
+              applyReducer(reduce, result);
+            }
+          } else {
+            applyReducer(reduce, payload);
+          }
+        }
+      });
     },
     subscribe: subscription => {
       console.log(`✅ [hookstores] adding a subscription to ${storeKey}`);

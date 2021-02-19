@@ -1,4 +1,8 @@
 {
+  "env": {
+    "browser": true,
+    "es6": true
+  },
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
@@ -14,11 +18,7 @@
   "ignorePatterns": [
     "dist"
   ],
-  "globals": {
-    "process": true,
-    "console": true,
-    "window": true
-  },
+  "globals": {},
   "settings": {
     "react": {
       "version": "detect"
