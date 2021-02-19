@@ -86,13 +86,15 @@ const middleware = {
   on: 'ACTION_TYPE',
   reduce: (draft, payload) => {
     /*
-      just update the draft with your payload, immer will produce your next immutable state.
+      just update the draft with your payload,
+      immer will produce your next immutable state.
     */
   },
   perform: (parameters, getState) => {
     /*
       Optional sync or async function.
-      When it is done, a thunk function will be called with the resut, to call reduce
+      When it is done, a thunk function will be called
+      with the result, to apply reduce
     */
   }
 };
