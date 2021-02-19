@@ -43,7 +43,6 @@ const createStore = (storeKey, storeDescription) => {
           if (typeof perform === 'function') {
             const result = perform(payload, getState);
             if (result.then) {
-              console.log('has a then, it;s a promise');
               result.then(_payload => {
                 applyReducer(reduce, _payload);
               });

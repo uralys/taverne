@@ -1,10 +1,8 @@
 # ⛵ hookstores <a href="https://www.npmjs.com/package/hookstores"><img src="https://img.shields.io/npm/v/hookstores?color=%23123" alt="Current npm package version." /></a> <a href="https://www.npmjs.com/package/hookstores"><img src="https://img.shields.io/github/license/uralys/hookstores" alt="MIT" /> <img src="https://img.shields.io/badge/-experimental-5908d2.svg" alt="Experimental solution." /> </a>
 
-`Hookstores` is an elementary [Flux](https://facebook.github.io/flux/docs/in-depth-overview) implementation using React hooks.
+`Hookstores` is an elementary [Flux](https://facebook.github.io/flux/docs/in-depth-overview) implementation using `React` hooks and [`Immer`](https://github.com/immerjs/immer).
 
 ![action->dispatcher->store->view](https://facebook.github.io/flux/img/overview/flux-simple-f8-diagram-1300w.png)
-
----
 
 ## 📦 installation
 
@@ -27,8 +25,6 @@ render(
 );
 ```
 
----
-
 ## 🎨 idea
 
 - `Hookstores` allows to organize your React app State in one or many stores.
@@ -44,18 +40,14 @@ const ItemsContainer = props => {
 };
 ```
 
----
-
 ## 🛠 setup
 
 Here is the path to follow to setup Hookstores on your app:
 
-- 1: write descriptions: your redux-like reducers
+- 1: write descriptions: your middlewares and reducers with Immer.
 - 2: create stores on startup
 - 3: bind store data to your container state
 - 4: dispatch actions to trigger stores changes
-
----
 
 In the following, let's illustrate how to use `Hookstores` with:
 
@@ -67,30 +59,51 @@ In the following, let's illustrate how to use `Hookstores` with:
 
 ## ✍️ descriptions
 
-`Hookstores` will create stores, register for actions, and emit updates using the descriptions you provide.
+A description is
 
-![computeAction](https://user-images.githubusercontent.com/910636/103582817-e2d13600-4ede-11eb-8fbf-f0eb2a7cd3e7.png)
-
-Each store has its own description, which must export:
-
-- an `initialState`,
-- a list of `handledActions`, from which this store needs to update its state.
-- a function `computeAction`, computing a new store state as a reaction to each action.
+- an initialState,
+- and a list of middlewares.
 
 ```js
 const itemsStoreDescription = {
   initialState: {},
-  handledActions: [],
-  computeAction: () => ({})
+  middlewares: []
 };
 
 export default itemsStoreDescription;
 ```
 
-🔍 When describing a store:
+`Hookstores` will create stores, register for actions, and emit updates based on those middlewares;
 
-- you should use one store for one feature (here the `Items`)
-- define within `computeAction` how a store must update its state for every `handledAction`.
+![computeAction](https://user-images.githubusercontent.com/910636/103582817-e2d13600-4ede-11eb-8fbf-f0eb2a7cd3e7.png)
+
+🔍 You should use one store for each feature (here the `itemsStore` to deal with the `Items`)
+
+## ⛽ middlewares
+
+```js
+const middleware = {
+  on: 'ACTION_TYPE',
+  reduce: (draft, payload) => {
+    /*
+      just update the draft with your payload, immer will produce your next immutable state.
+    */
+  },
+  perform: (parameters, getState) => {
+    /*
+      Optional sync or async function.
+      When it is done, a thunk function will be called with the resut, to call reduce
+    */
+  }
+};
+```
+
+- A middleware will be triggered when `on` === `action.type`.
+
+- `reduce` is called using `immer`, so mutate the `draft` exactly as it is done with [produce](https://immerjs.github.io/immer/docs/produce)
+
+- If you have some business to do before reducing, for example calling an API, use the `perform` function.
+  Then `reduce` will be called with the result once it's done. (yes, [thunk functions](https://daveceddia.com/what-is-a-thunk/) are handled by default 🚀)
 
 <details>
 <summary>Example</summary>
@@ -99,33 +112,27 @@ Here is the example for our illustrating `itemsStore`
 
 ```js
 /* ./features/items/store-description.js */
-import fetchItems from './fetch-items.js';
+import apiCall from './fetch-items.js';
 
 const FETCH_ITEMS = 'FETCH_ITEMS';
 
-const computeAction = async (currentState, action) => {
-  let newState;
-
-  switch (action.type) {
-    case FETCH_ITEMS: {
-      const items = await fetchItems();
-      newState = {...currentState, items};
-      break;
-    }
-    default:
-      newState = {...currentState};
+const fetchItems = {
+  on: FETCH_ITEMS,
+  perform: async (parameters, getState) => {
+    const items = await apiCall(parameters);
+    return items;
+  },
+  reduce: (draft, payload) => {
+    draft.items = payload;
   }
-
-  return newState;
 };
 
-const itemsStoreDescription = {
+const description = {
   initialState: {items: null},
-  handledActions: [FETCH_ITEMS],
-  computeAction
+  middlewares: [fetchItems]
 };
 
-export default itemsStoreDescription;
+export default description;
 export {FETCH_ITEMS};
 ```
 
