@@ -4,10 +4,8 @@ import {produce} from 'immer';
 
 // -----------------------------------------------------------------------------
 
-const createStore = (storeKey, storeDescription) => {
+const createStore = (storeKey, initialState, reactions) => {
   console.log('☢️ [hookstores] creating store', storeKey);
-
-  const {initialState, middlewares} = storeDescription;
 
   // -------------------------------------------------
 
@@ -38,7 +36,7 @@ const createStore = (storeKey, storeDescription) => {
     onDispatch: action => {
       const {type, ...payload} = action;
 
-      middlewares.forEach(({on, perform, reduce}) => {
+      reactions.forEach(({on, perform, reduce}) => {
         if (on === type) {
           if (typeof perform === 'function') {
             const result = perform(payload, getState);

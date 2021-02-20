@@ -99,11 +99,12 @@ const createDispatch = stores =>
 
 // -----------------------------------------------------------------------------
 
-const createStores = descriptions => {
-  console.log('☢️ [hookstores] creating Hookstores...', descriptions);
-  const stores = Object.keys(descriptions).reduce((acc, storeKey) => {
+const createStores = definitions => {
+  console.log('☢️ [hookstores] creating Hookstores...', definitions);
+  const stores = Object.keys(definitions).reduce((acc, storeKey) => {
     console.log(`☢️ [hookstores] registering ${storeKey}`);
-    const store = createStore(storeKey, descriptions[storeKey]);
+    const {initialState, reactions} = definitions[storeKey];
+    const store = createStore(storeKey, initialState, reactions);
 
     return {
       ...acc,

@@ -21,8 +21,8 @@ const useHookstores = () => {
 
 // -----------------------------------------------------------------------------
 
-const Hookstores = ({descriptions, children}) => {
-  const {dispatch, ...hooks} = createStores(descriptions);
+const Hookstores = ({stores: definitions, children}) => {
+  const {dispatch, ...hooks} = createStores(definitions);
 
   return (
     <HookstoresContext.Provider value={{dispatch, ...hooks}}>
