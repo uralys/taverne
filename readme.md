@@ -18,7 +18,7 @@ import {render} from 'react-dom';
 import {Hookstores} from 'hookstores';
 
 render(
-  <Hookstores descriptions={descriptions}>
+  <Hookstores>
     <App />
   </Hookstores>,
   container
@@ -62,8 +62,6 @@ Illustration will be marked with 🔍
 
 </details>
 
----
-
 ## 📦 create a store
 
 You'll have to define a store with
@@ -83,11 +81,11 @@ export default itemsStore;
 You should use one store for each feature.
 (🔍 here the `itemsStore` to deal with the `Items`)
 
-`Hookstores` will create the actual stores from this:
+`Hookstores` will create the actual store for each of them to:
 
-- handle an immutable state with [Immer](https://immerjs.github.io/immer/docs/introduction)
-- listen to actions to trigger the appropriate `reactions`
-- emit updates to the containers;
+- handle an immutable state with [Immer](https://immerjs.github.io/immer/docs/introduction),
+- listen to actions to trigger the appropriate `reactions`,
+- emit updates to the containers when there are changes only.
 
 ![computeAction](https://user-images.githubusercontent.com/910636/103582817-e2d13600-4ede-11eb-8fbf-f0eb2a7cd3e7.png)
 
@@ -131,7 +129,7 @@ const doSomethingInThisStore = {
 Here is the example for our illustrating `itemsStore`
 
 ```js
-/* ./features/items/store-description.js */
+/* ./features/items/store.js */
 import apiCall from './fetch-items.js';
 
 const FETCH_ITEMS = 'FETCH_ITEMS';
@@ -162,14 +160,13 @@ export {FETCH_ITEMS};
 
 </details>
 
----
-
 ## 🏁 setup the Hookstores provider with these stores
 
 Once all stores are ready, and pass them as `stores` parameter to `<Hookstores>`.
 
-This is were you choose names your stores.
-`Hookstores` will simply create hooks with the same names by prefixing with `use`.
+This is where you define names your stores.
+
+`Hookstores` will simply create hooks with the same names with the `use` prefix.
 
 ```js
 whatheverNameStore ===> useWhatheverNameStore()
@@ -205,8 +202,6 @@ here `Hookstores` will create those hooks:
 const {useItemsStore, useAnyOtherStore} = useHookstores();
 ```
 
----
-
 ## 🍕 Using those stores in your containers
 
 ### storeState ➡️ props
@@ -231,14 +226,12 @@ const ItemsContainer = props => {
 
 To listen to specific changes in a store, and update your local props only on those changes, use `propsMapping` (see the [advanced section](#-advanced-usage)).
 
----
-
 ## 📡 dispatching actions
 
 Use [`prop drilling`](https://kentcdodds.com/blog/prop-drilling) from your containers to your components: pass functions dispatching the actions
 
 ```js
-import {SELECT_ITEM} from './features/items/store-description.js';
+import {SELECT_ITEM} from './features/items/store.js';
 
 const ItemsContainer = props => {
   const {dispatch} = useHookstores();
@@ -253,8 +246,6 @@ const ItemsContainer = props => {
   return <ItemsComponent selectItem={selectItem} />;
 };
 ```
-
----
 
 ## 🔥 advanced usage
 
@@ -283,8 +274,6 @@ const ItemsContainer = props => {
 ```
 
 This way, on every store update, specific props will be extracted for the components, and nothing else: this will allow accurate local rendering from a global app state.
-
----
 
 ## 📚 motivation
 
