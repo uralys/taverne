@@ -1,4 +1,4 @@
-# ⛵ hookstores <a href="https://www.npmjs.com/package/hookstores"><img src="https://img.shields.io/npm/v/hookstores?color=%23123" alt="Current npm package version." /></a> <a href="https://www.npmjs.com/package/hookstores"><img src="https://img.shields.io/github/license/uralys/hookstores" alt="MIT" /> <img src="https://img.shields.io/badge/-experimental-5908d2.svg" alt="Experimental solution." /> </a>
+# ⛵ hookstores <a href="https://www.npmjs.com/package/hookstores"><img src="https://img.shields.io/npm/v/hookstores?color=%23123" alt="Current npm package version." /></a> <a href="https://www.npmjs.com/package/hookstores"><img src="https://img.shields.io/github/license/uralys/hookstores" alt="MIT" /></a> <a href="https://reactjs.org/docs/hooks-custom.html"><img src="https://img.shields.io/badge/react-hooks-5908d2.svg" alt="hooks" /></a> <a href="https://immerjs.github.io/immer/docs/produce"><img src="https://img.shields.io/badge/immer-produce-5908d2.svg" alt="immer" /> </a>
 
 `Hookstores` is an elementary [Flux](https://facebook.github.io/flux/docs/in-depth-overview) implementation using `React` hooks and [`Immer`](https://github.com/immerjs/immer).
 
