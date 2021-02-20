@@ -5,10 +5,6 @@ import {produce} from 'immer';
 // -----------------------------------------------------------------------------
 
 const createStore = (storeKey, initialState, reactions) => {
-  console.log('☢️ [hookstores] creating store', storeKey);
-
-  // -------------------------------------------------
-
   let state = initialState;
   const subscriptions = [];
   const getState = () => state;
@@ -54,16 +50,10 @@ const createStore = (storeKey, initialState, reactions) => {
       });
     },
     subscribe: subscription => {
-      console.log(`✅ [hookstores] adding a subscription to ${storeKey}`);
       subscriptions.push(subscription);
     },
     unsubscribe: subscription => {
       subscriptions.splice(subscriptions.indexOf(subscription), 1);
-
-      console.log(
-        `✅ [hookstores] removed a subscription to ${storeKey}`,
-        subscription
-      );
     },
     debug: () => ({
       storeKey,

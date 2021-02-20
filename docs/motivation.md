@@ -1,4 +1,4 @@
-## 📚 motivation
+# 📚 motivation
 
 - React is no more a `View` lib, it's now (v17) a complete framework: so either we pick a lighter lib for the `View`, or choosing React ❌ **we shouldn't need to use an additional external framework** such as Redux, MobX, RxJs, Recoil, Zustand, Jotail...
 
@@ -18,14 +18,22 @@
 
   - Try to instanciate twice your app with `zustand`: ❌ your stores are not scoped, you need to scope them manually. That's where a React context Provider is useful, and I chose to wrap my React app with a Provider to use many `Hookstores` in different apps in one single page.
 
-## 🧙 experimentation
+- Now, experimenting with the first versions of Hookstores, I got quite early on the issue of calling **async functions** before to reduce a store state.
+  Which is resolved by Redux:
 
-The idea with `Hookstores` is:
+  - [using a thunk middleware](https://github.com/reduxjs/redux-thunk#motivation), which is indeed a smart hack, but leads to overload again the Redux workflow with more opacity: ❌ you may dispatch Actions OR Thunks. If you go for thunks for async calls, a middleware will call them for you.
+
+  - using `Redux saga` or `Redux Loop` ❌ a framework over the framework.
+
+---
+
+### The idea with `Hookstores` is:
 
 - ✅ to stay within React **only**,
 - ✅ to implement a simple [Flux architecture](https://facebook.github.io/flux/docs/in-depth-overview)
-- ✅ **splitting** the global app state into **stores** states,
+- ✅ **splitting** the global app state into **stores** states, then using React hooks to access `{...props} = useMyStore()` anywhere,
 - ✅ applying **local rendering**, by mapping these stores states to [containers](https://medium.com/@learnreact/container-components-c0e67432e005), using React hooks `useState` and `useEffect`.
-- ✅ creating the stores on app startup, then using React hooks to access `{...props} = useMyStore()` anywhere,
-- ✅ add `propsMapping` to update `props` only when there _is_ an update on this store: Now that's local re-rendering.
-- ✅ using `dispatch` to emit actions to every store, and they now if they have to compute this action to reduce a new state.
+- ✅ add `propsMapping` to update `props` only when there _is_ an update on this store, to provide even more accurate re-rendering.
+- ✅ to `dispatch` actions for which stores will have `reactions`:
+  - reduce this action immediately.
+  - or perform a function before.

@@ -63,7 +63,6 @@ const createUseStore = store =>
     const onUpdate = createUpdater(setProps, propsMapping);
 
     useIsoLayoutEffect(() => {
-      console.log(`☢️ [hookstores] connecting store ${store.storeKey}`);
       const disconnect = connectStore(store, onUpdate);
       return disconnect;
     }, []);
@@ -100,9 +99,7 @@ const createDispatch = stores =>
 // -----------------------------------------------------------------------------
 
 const createStores = definitions => {
-  console.log('☢️ [hookstores] creating Hookstores...', definitions);
   const stores = Object.keys(definitions).reduce((acc, storeKey) => {
-    console.log(`☢️ [hookstores] registering ${storeKey}`);
     const {initialState, reactions} = definitions[storeKey];
     const store = createStore(storeKey, initialState, reactions);
 

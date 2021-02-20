@@ -44,10 +44,13 @@ const ItemsContainer = props => {
 
 Here is the path to follow to setup Hookstores on your app:
 
-- 1: write descriptions: your middlewares and reducers with Immer.
-- 2: create stores on startup
-- 3: bind store data to your container state
-- 4: dispatch actions to trigger stores changes
+- 1: write `reactions`: the way your store must react to actions.
+- 2: give your stores to `<Hookstores>`
+- 3: read stores data in your containers
+- 4: dispatch actions to trigger `reactions`.
+
+<details>
+<summary>🔍 Illustration</summary>
 
 In the following, let's illustrate how to use `Hookstores` with:
 
@@ -55,60 +58,75 @@ In the following, let's illustrate how to use `Hookstores` with:
 - a `container` plugged to this store,
 - and the `component` rendering the list of items.
 
+Illustration will be marked with 🔍
+
+</details>
+
 ---
 
-## ✍️ descriptions
+## 📦 create a store
 
-A description is
+You'll have to define a store with
 
 - an initialState,
-- and a list of middlewares.
+- and a list of reactions.
 
 ```js
-const itemsStoreDescription = {
+const itemsStore = {
   initialState: {},
-  middlewares: []
+  reactions: []
 };
 
-export default itemsStoreDescription;
+export default itemsStore;
 ```
 
-`Hookstores` will create stores, register for actions, and emit updates based on those middlewares;
+You should use one store for each feature.
+(🔍 here the `itemsStore` to deal with the `Items`)
+
+`Hookstores` will create the actual stores from this:
+
+- handle an immutable state with [Immer](https://immerjs.github.io/immer/docs/introduction)
+- listen to actions to trigger the appropriate `reactions`
+- emit updates to the containers;
 
 ![computeAction](https://user-images.githubusercontent.com/910636/103582817-e2d13600-4ede-11eb-8fbf-f0eb2a7cd3e7.png)
 
-🔍 You should use one store for each feature (here the `itemsStore` to deal with the `Items`)
+## 🔆 Reactions
 
-## ⛽ middlewares
+Here is a `reaction`:
 
 ```js
-const middleware = {
+const doSomethingInThisStore = {
   on: 'ACTION_TYPE',
-  reduce: (draft, payload) => {
+  reduce: (state, payload) => {
     /*
-      just update the draft with your payload,
-      immer will produce your next immutable state.
+      Just update the state with your payload.
+      Here, `state` is the draftState used by `Immer.produce`
+      You store will then record your next immutable state.
     */
+    state.foo = 'bar';
   },
   perform: (parameters, getState) => {
     /*
       Optional sync or async function.
-      When it is done, a thunk function will be called
-      with the result, to apply reduce
+      It will be called before `reduce`
+      When it is done, reduce will receive the result in
+      the `payload` parameter
     */
   }
 };
 ```
 
-- A middleware will be triggered when `on` === `action.type`.
+- A `reaction` will be triggered when `on` === `action.type`.
 
-- `reduce` is called using `immer`, so mutate the `draft` exactly as it is done with [produce](https://immerjs.github.io/immer/docs/produce)
+- `reduce` is called using `Immer`, so mutate the `state` exactly as you would with the `draftState` parameter in [produce](https://immerjs.github.io/immer/docs/produce).
 
-- If you have some business to do before reducing, for example calling an API, use the `perform` function.
-  Then `reduce` will be called with the result once it's done. (yes, [thunk functions](https://daveceddia.com/what-is-a-thunk/) are handled by default 🚀)
+- If you have some business to do before reducing, for example calling an API, use the `perform` function, either `sync` or `async`.
+
+  Then `reduce` will be called with the result once it's done.
 
 <details>
-<summary>Example</summary>
+<summary>🔍 Example</summary>
 
 Here is the example for our illustrating `itemsStore`
 
@@ -118,23 +136,27 @@ import apiCall from './fetch-items.js';
 
 const FETCH_ITEMS = 'FETCH_ITEMS';
 
+const initialState = {items: null};
+
 const fetchItems = {
   on: FETCH_ITEMS,
   perform: async (parameters, getState) => {
+    // This function will be called whenever {type:FETCH_ITEMS} is dispatched.
+    // `getState` is provided here for convenience, to access the current store state.
+
     const items = await apiCall(parameters);
     return items;
   },
   reduce: (draft, payload) => {
+    // 'reduce' will be called after `perform` is over.
+    // 'perform' returns the items, so here payload === items
     draft.items = payload;
   }
 };
 
-const description = {
-  initialState: {items: null},
-  middlewares: [fetchItems]
-};
+const reactions = [fetchItems];
 
-export default description;
+export default {initialState, reactions};
 export {FETCH_ITEMS};
 ```
 
@@ -142,9 +164,18 @@ export {FETCH_ITEMS};
 
 ---
 
-## 🏁 setup the Hookstores provider with these descriptions
+## 🏁 setup the Hookstores provider with these stores
 
-Once all descriptions are ready, you give them names, and pass them as parameters to `createStores()`
+Once all stores are ready, and pass them as `stores` parameter to `<Hookstores>`.
+
+This is were you choose names your stores.
+`Hookstores` will simply create hooks with the same names by prefixing with `use`.
+
+```js
+whatheverNameStore ===> useWhatheverNameStore()
+```
+
+🔍 Example:
 
 ```js
 /* ./index.js */
@@ -152,29 +183,37 @@ import React from 'react';
 import {render} from 'react-dom';
 import {Hookstores} from 'hookstores';
 
-import itemsStore from './features/items/store-description.js';
-import anyOtherStore from './features/whatever/store-description.js';
+import itemsStore from './features/items/store.js';
+import anyOtherStore from './features/whatever/store.js';
+
+const stores = {
+  itemsStore,
+  anyOtherStore
+};
 
 render(
-  <Hookstores
-    descriptions={{
-      itemsStore,
-      anyOtherStore
-    }}
-  >
+  <Hookstores stores={stores}>
     <App />
   </Hookstores>,
   container
 );
 ```
 
+here `Hookstores` will create those hooks:
+
+```js
+const {useItemsStore, useAnyOtherStore} = useHookstores();
+```
+
 ---
 
-## storeState ➡️ props
+## 🍕 Using those stores in your containers
+
+### storeState ➡️ props
 
 Listen to changes in a store and use in your local props by using the `useXxxxStore` hook that was created for your store.
 
-Here is the example for our illustrating `itemsStore`:
+🔍 Here is the example for our illustrating `itemsStore`:
 
 ```js
 /* ./features/items/container.js */
