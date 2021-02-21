@@ -118,7 +118,7 @@ const doSomethingInThisStore = {
 };
 ```
 
-- A `reaction` will be triggered when `on` === `action.type`.
+- A `reaction` will be triggered when an action is dispatched with `action.type` === `on`.
 
 - `reduce` is called using `Immer`, so mutate the `state` exactly as you would with the `draftState` parameter in [produce](https://immerjs.github.io/immer/docs/produce).
 
