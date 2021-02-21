@@ -86,6 +86,12 @@ const createHooks = stores =>
 const createDispatch = stores => {
   let dispatch;
 
+  const delayedDispatch = (...params) => {
+    setTimeout(() => {
+      dispatch(params);
+    }, 20);
+  };
+
   dispatch = action => {
     console.log('📡 [hookstores] dispatching', action);
 
@@ -94,7 +100,7 @@ const createDispatch = stores => {
     }
 
     Object.keys(stores).forEach(storeKey => {
-      stores[storeKey].onDispatch(action, dispatch);
+      stores[storeKey].onDispatch(action, delayedDispatch);
     });
   };
 

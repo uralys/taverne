@@ -104,12 +104,15 @@ const doSomethingInThisStore = {
     */
     state.foo = 'bar';
   },
-  perform: (parameters, getState) => {
+  perform: (parameters, getState, dispatch) => {
     /*
       Optional sync or async function.
       It will be called before `reduce`
+
       When it is done, reduce will receive the result in
-      the `payload` parameter
+      the `payload` parameter.
+
+      You can `dispatch` next steps from here as well
     */
   }
 };
