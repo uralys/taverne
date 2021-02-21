@@ -12,6 +12,10 @@ const createStore = (storeKey, initialState, reactions) => {
   // -------------------------------------------------
 
   const applyReducer = (reduce, payload) => {
+    if (!reduce) {
+      return;
+    }
+
     const previousState = getState();
     const newState = produce(previousState, draftState =>
       reduce(draftState, payload)
@@ -36,7 +40,7 @@ const createStore = (storeKey, initialState, reactions) => {
         if (on === type) {
           if (typeof perform === 'function') {
             const result = perform(payload, getState, dispatch);
-            if (result.then) {
+            if (result && result.then) {
               result.then(_payload => {
                 applyReducer(reduce, _payload);
               });
