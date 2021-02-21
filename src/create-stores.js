@@ -86,9 +86,10 @@ const createHooks = stores =>
 const createDispatch = stores => {
   let dispatch;
 
-  const delayedDispatch = (...params) => {
+  // to avoid recursive loops when perform uses dispatch
+  const delayedDispatch = action => {
     setTimeout(() => {
-      dispatch(params);
+      dispatch(action);
     }, 20);
   };
 
