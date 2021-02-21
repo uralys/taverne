@@ -83,8 +83,10 @@ const createHooks = stores =>
 
 // -----------------------------------------------------------------------------
 
-const createDispatch = stores =>
-  function dispatch(action) {
+const createDispatch = stores => {
+  let dispatch;
+
+  dispatch = action => {
     console.log('📡 [hookstores] dispatching', action);
 
     if (!action.type) {
@@ -92,9 +94,12 @@ const createDispatch = stores =>
     }
 
     Object.keys(stores).forEach(storeKey => {
-      stores[storeKey].onDispatch(action);
+      stores[storeKey].onDispatch(action, dispatch);
     });
   };
+
+  return dispatch;
+};
 
 // -----------------------------------------------------------------------------
 
