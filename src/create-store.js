@@ -32,6 +32,7 @@ const createStore = (storeKey, initialState, reactions) => {
 
   const store = {
     storeKey,
+    initialState,
     getState,
     onDispatch: (action, delayedDispatch) => {
       const {type, ...payload} = action;

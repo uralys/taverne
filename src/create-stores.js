@@ -59,7 +59,7 @@ const createUpdater = (setProps, propsMapping = null) => {
 
 const createUseStore = store =>
   function useStore(propsMapping = null) {
-    const [props, setProps] = useState({});
+    const [props, setProps] = useState(store.initialState);
     const onUpdate = createUpdater(setProps, propsMapping);
 
     useIsoLayoutEffect(() => {
