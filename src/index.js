@@ -1,4 +1,7 @@
+// -----------------------------------------------------------------------------
+
 import React, {createContext, useContext} from 'react';
+import createHooks from './create-hooks';
 import createStores from './create-stores';
 
 // -----------------------------------------------------------------------------
@@ -21,8 +24,8 @@ const useHookstores = () => {
 
 // -----------------------------------------------------------------------------
 
-const Hookstores = ({stores: definitions, children}) => {
-  const {dispatch, ...hooks} = createStores(definitions);
+const Hookstores = ({dispatch, stores, children}) => {
+  const hooks = createHooks(stores);
 
   return (
     <HookstoresContext.Provider value={{dispatch, ...hooks}}>
@@ -33,6 +36,6 @@ const Hookstores = ({stores: definitions, children}) => {
 
 // -----------------------------------------------------------------------------
 
-export {Hookstores, useHookstores};
+export {createStores, Hookstores, useHookstores};
 
 // -----------------------------------------------------------------------------
