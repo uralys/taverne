@@ -7,15 +7,15 @@ console.log('☢️  warming esbuild...');
 const DIST = 'dist';
 
 const banner = `/**
- * hookstores v${pkg.version}
+ * ⛵ hookstores v${pkg.version}
  * (c) Uralys, Christophe Dugne-Esquevin
  * https://github.com/uralys/hookstores
  * @license MIT
  *
- * BUNDLED with esbuild
+ * 🔥 BUNDLED with esbuild:
  * https://github.com/evanw/esbuild
  *
- * DEPENDENCIES:
+ * 💖 DEPENDENCIES:
  *
  * immer
  * (c) 2017 Michel Weststrate
@@ -34,11 +34,13 @@ const banner = `/**
  */
 `;
 
-[
+const formats = [
   {format: 'cjs', minify: false},
   {format: 'cjs', minify: true},
   {format: 'esm', minify: false}
-].forEach(({format, minify}) => {
+];
+
+formats.forEach(({format, minify}) => {
   const outfile = `${DIST}/${format}/hookstores${minify ? '.min' : ''}.js`;
   const metafile = `${DIST}/meta/meta-${format}${minify ? '-min' : ''}.json`;
 
@@ -71,3 +73,39 @@ const banner = `/**
     })
     .catch(() => process.exit(1));
 });
+
+// --------------
+// devtools
+
+const devToolsBanner = `/**
+* ⛵ hookstores v${pkg.version}
+* (c) Uralys, Christophe Dugne-Esquevin
+* https://github.com/uralys/hookstores
+* @license MIT
+*
+* 🔥 BUNDLED with esbuild:
+* https://github.com/evanw/esbuild
+*
+* 💖 middleware for https://github.com/reduxjs/redux-devtools
+*/
+`;
+
+const outfile = `${DIST}/esm/middlewares.js`;
+
+esbuild
+  .build({
+    banner: devToolsBanner,
+    format: 'esm',
+    bundle: true,
+    entryPoints: ['src/middlewares/index.js'],
+    outfile,
+    loader: {'.js': 'jsx'}
+  })
+  .then(() => {
+    console.log(`${chalk.green(' ✔ Success')}`);
+
+    console.log(
+      ` ${chalk.cyan('→')} ${chalk.hex('#C07CFF').bold(`devtools: ${outfile}`)}`
+    );
+  })
+  .catch(() => process.exit(1));

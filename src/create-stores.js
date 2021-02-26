@@ -13,11 +13,11 @@ const createDispatch = (stores, middlewares) => {
     }
 
     Object.keys(stores).forEach(storeKey => {
-      stores[storeKey].onDispatch(action, dispatch);
+      stores[storeKey].onDispatch(action, dispatch, stores);
     });
 
     middlewares.forEach(middleware => {
-      middleware.onDispatch(action, dispatch);
+      middleware.onDispatch(action, dispatch, stores);
     });
   };
 
@@ -37,7 +37,11 @@ const createStores = (definitions, middlewares) => {
     };
   }, {});
 
-  const dispatch = createDispatch(stores);
+  const dispatch = createDispatch(stores, middlewares);
+
+  middlewares.forEach(middleware => {
+    middleware.onCreate(dispatch, stores);
+  });
 
   return {dispatch, stores};
 };

@@ -8,6 +8,14 @@ const createStore = (storeKey, initialState, reactions) => {
   let state = initialState;
   const subscriptions = [];
   const getState = () => state;
+  const setState = (newState, _previousState) => {
+    const previousState = _previousState || getState();
+    state = newState;
+
+    subscriptions.forEach(onUpdate => {
+      onUpdate(newState, previousState);
+    });
+  };
 
   // -------------------------------------------------
 
@@ -21,11 +29,7 @@ const createStore = (storeKey, initialState, reactions) => {
       reduce(draftState, payload)
     );
 
-    state = newState;
-
-    subscriptions.forEach(onUpdate => {
-      onUpdate(newState, previousState);
-    });
+    setState(newState, previousState);
   };
 
   // -------------------------------------------------
@@ -34,13 +38,14 @@ const createStore = (storeKey, initialState, reactions) => {
     storeKey,
     initialState,
     getState,
-    onDispatch: (action, delayedDispatch) => {
+    setState,
+    onDispatch: (action, dispatch, stores) => {
       const {type, ...payload} = action;
 
       reactions.forEach(({on, perform, reduce}) => {
         if (on === type) {
           if (typeof perform === 'function') {
-            const result = perform(payload, getState, delayedDispatch);
+            const result = perform(payload, getState, dispatch, stores);
             if (result && result.then) {
               result.then(_payload => {
                 applyReducer(reduce, _payload);
