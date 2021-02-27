@@ -11,18 +11,13 @@
     "react-hooks"
   ],
   "author": "@chrisdugne",
-  "main": "dist/cjs/hookstores.js",
-  "module": "dist/esm/hookstores.js",
-  "files": [
-    "src",
-    "dist/esm",
-    "dist/cjs",
-    "readme.md",
-    "licence"
-  ],
+  "main": "cjs/hookstores.js",
+  "module": "esm/hookstores.js",
+  "sideEffects": false,
   "scripts": {
-    "clean": "rimraf ./dist",
+    "prebuild": "rimraf ./dist",
     "build": "node scripts/build.js",
+    "prepublish": "sh scripts/prepare-package.sh",
     "lint": "eslint src",
     "prepublishOnly": "npm run build"
   },

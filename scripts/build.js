@@ -64,48 +64,12 @@ formats.forEach(({format, minify}) => {
       console.log(`${chalk.green(' ✔ Success')}`);
 
       console.log(
-        ` ${chalk.cyan('→')} ${chalk.hex('#C07CFF').bold(`${outfile}`)}`
-      );
-
-      console.log(
-        ` ${chalk.cyan('→')} ${chalk.hex('#C07CFF').bold(`${metafile}`)}`
+        `   ${chalk.cyan('→')} ${chalk
+          .hex('#D07CFF')
+          .bold(`${outfile}`)} ${chalk.cyan('→')} (${chalk.hex('#ffddFd')(
+          `${metafile}`
+        )})`
       );
     })
     .catch(() => process.exit(1));
 });
-
-// --------------
-// devtools
-
-const devToolsBanner = `/**
-* ⛵ hookstores v${pkg.version}
-* (c) Uralys, Christophe Dugne-Esquevin
-* https://github.com/uralys/hookstores
-* @license MIT
-*
-* 🔥 BUNDLED with esbuild:
-* https://github.com/evanw/esbuild
-*
-* 💖 middleware for https://github.com/reduxjs/redux-devtools
-*/
-`;
-
-const outfile = `${DIST}/esm/middlewares.js`;
-
-esbuild
-  .build({
-    banner: devToolsBanner,
-    format: 'esm',
-    bundle: true,
-    entryPoints: ['src/middlewares/index.js'],
-    outfile,
-    loader: {'.js': 'jsx'}
-  })
-  .then(() => {
-    console.log(`${chalk.green(' ✔ Success')}`);
-
-    console.log(
-      ` ${chalk.cyan('→')} ${chalk.hex('#C07CFF').bold(`devtools: ${outfile}`)}`
-    );
-  })
-  .catch(() => process.exit(1));
