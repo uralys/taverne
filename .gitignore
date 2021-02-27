@@ -1,5 +1,8 @@
 # built files
 dist
+dist.package
+
+# deps
 node_modules
 
 # osx

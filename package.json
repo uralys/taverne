@@ -15,11 +15,12 @@
   "module": "esm/hookstores.js",
   "sideEffects": false,
   "scripts": {
-    "prebuild": "rimraf ./dist",
+    "prebuild": "rimraf ./dist ./dist.package",
     "build": "node scripts/build.js",
-    "prepublish": "sh scripts/prepare-package.sh",
+    "build:package": "sh scripts/build-package.sh",
     "lint": "eslint src",
-    "prepublishOnly": "npm run build"
+    "prerelease": "npm run build && npm run build:package",
+    "release": "npm publish ./dist.package"
   },
   "peerDependencies": {
     "react": "^16.0.0 || ^17.0.0"
