@@ -19,6 +19,7 @@
     "build": "node scripts/build.js",
     "build:package": "sh scripts/build-package.sh",
     "lint": "eslint src",
+    "test": "ava",
     "prerelease": "npm run build && npm run build:package",
     "release": "npm publish ./dist.package"
   },
@@ -26,6 +27,10 @@
     "react": "^16.0.0 || ^17.0.0"
   },
   "dependencies": {
+    "@babel/preset-env": "^7.13.8",
+    "@babel/preset-react": "^7.12.13",
+    "@babel/register": "^7.13.8",
+    "ava": "^3.15.0",
     "deep-equal": "^2.0.5",
     "immer": "^8.0.1"
   },

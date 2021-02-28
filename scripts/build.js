@@ -2,7 +2,7 @@ const pkg = require('../package.json');
 const chalk = require('chalk');
 const esbuild = require('esbuild');
 
-console.log('☢️  warming esbuild...');
+console.log('☢️  warming up esbuild...');
 
 const DIST = 'dist';
 

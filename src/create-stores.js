@@ -26,7 +26,7 @@ const createDispatch = (stores, middlewares) => {
 
 // -----------------------------------------------------------------------------
 
-const createStores = (definitions, middlewares) => {
+const createStores = (definitions, middlewares = []) => {
   const stores = Object.keys(definitions).reduce((acc, storeKey) => {
     const {initialState, reactions} = definitions[storeKey];
     const store = createStore(storeKey, initialState, reactions);

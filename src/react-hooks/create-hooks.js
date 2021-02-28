@@ -2,8 +2,8 @@
 
 import deepEqual from 'deep-equal';
 import {useEffect, useLayoutEffect, useState} from 'react';
-import connectStore from './connect-store';
-import get from './get';
+import connectStore from '../connect-store';
+import get from '../get';
 
 // -----------------------------------------------------------------------------
 
