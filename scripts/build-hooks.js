@@ -3,10 +3,9 @@ const chalk = require('chalk');
 const esbuild = require('esbuild');
 
 const DIST = 'dist';
-const bundleName = 'taverne';
 
 const banner = `/**
- * ⛵ La Taverne v${pkg.version}
+ * ⛵ La Taverne v${pkg.version} - hooks
  * (c) Uralys, Christophe Dugne-Esquevin
  * https://github.com/uralys/taverne
  * @license MIT
@@ -16,44 +15,42 @@ const banner = `/**
  *
  * 💖 DEPENDENCIES:
  *
- * immer
- * (c) 2017 Michel Weststrate
- * https://github.com/immerjs/immer
+ * React
+ * (c) Facebook, Inc. and its affiliates.
+ * https://github.com/facebook/react
+ * @license MIT
+ *
+ * deep-equal
+ * (c) 2012, 2013, 2014 James Halliday <mail@substack.net>, 2009 Thomas Robinson <280north.com>
+ * https://github.com/inspect-js/node-deep-equal
  * @license MIT
  */
 `;
 
-const buildStores = (format, minify) => {
-  const outfile = `${DIST}/${format}/${bundleName}${minify ? '.min' : ''}.js`;
-  const metafile = `${DIST}/meta/meta-${format}${minify ? '-min' : ''}.json`;
+const buildHooks = () => {
+  const outfile = `${DIST}/hooks/index.js`;
 
   esbuild
     .build({
       banner,
-      format,
-      minify,
-      entryPoints: ['src/stores/create-stores.js'],
+      format: 'esm',
+      entryPoints: ['src/hooks/context-provider.js'],
       bundle: true,
-      sourcemap: true,
-      metafile,
       outfile,
       loader: {'.js': 'jsx'},
       define: {
         'process.env.NODE_ENV': '"production"'
-      }
+      },
+      external: ['react, deep-equal']
     })
     .then(() => {
       console.log(`${chalk.green(' ✔ Success')}`);
 
       console.log(
-        `   ${chalk.cyan('→')} ${chalk
-          .hex('#D07CFF')
-          .bold(`${outfile}`)} ${chalk.cyan('→')} (${chalk.hex('#ffddFd')(
-          `${metafile}`
-        )})`
+        `   ${chalk.cyan('→')} ${chalk.hex('#D07CFF').bold(`${outfile}`)}`
       );
     })
     .catch(() => process.exit(1));
 };
 
-module.exports = buildStores;
+module.exports = buildHooks;
