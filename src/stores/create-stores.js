@@ -6,10 +6,10 @@ import createStore from './create-store';
 
 const createDispatch = (stores, middlewares) => {
   const dispatch = action => {
-    console.log('📡 [hookstores] dispatching', action);
+    console.log('📡 [La Taverne] dispatching', action);
 
     if (!action.type) {
-      throw new Error(`❌ [hookstores] dispatch: action.type is required`);
+      throw new Error(`❌ [La Taverne] dispatch: action.type is required`);
     }
 
     Object.keys(stores).forEach(storeKey => {

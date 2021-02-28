@@ -1,5 +1,5 @@
-const test = require('ava');
-const {createStores} = require('../src/index');
+import test from 'ava';
+import createStores from '../src/stores/create-stores';
 
 test('simple definition', t => {
   const {stores} = createStores({
