@@ -1,1 +1,2 @@
-export * from './context-provider';
+import {Taverne} from './context-provider';
+export {Taverne};

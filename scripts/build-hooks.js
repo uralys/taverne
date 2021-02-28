@@ -33,15 +33,15 @@ const buildHooks = () => {
   esbuild
     .build({
       banner,
-      format: 'esm',
-      entryPoints: ['src/hooks/context-provider.js'],
+      format: 'cjs',
+      entryPoints: ['src/hooks/index.js'],
       bundle: true,
+      external: ['deep-equal', 'react'],
       outfile,
       loader: {'.js': 'jsx'},
       define: {
         'process.env.NODE_ENV': '"production"'
-      },
-      external: ['react, deep-equal']
+      }
     })
     .then(() => {
       console.log(`${chalk.green(' ✔ Success')}`);

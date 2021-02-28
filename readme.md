@@ -2,7 +2,9 @@
 
 <a href="https://www.npmjs.com/package/taverne"><img src="https://img.shields.io/npm/v/taverne?color=%23123" alt="Current npm package version." /></a> <a href="https://www.npmjs.com/package/taverne"><img src="https://img.shields.io/github/license/uralys/taverne" alt="MIT" /></a> <a href="https://reactjs.org/docs/hooks-custom.html"><img src="https://img.shields.io/badge/react-hooks-5908d2.svg" alt="hooks" /></a> <a href="https://immerjs.github.io/immer/docs/produce"><img src="https://img.shields.io/badge/immer-produce-5908d2.svg" alt="immer" /> </a>
 
-`La Taverne` is an elementary [Flux](https://facebook.github.io/flux/docs/in-depth-overview) implementation using `React` hooks and [`Immer`](https://github.com/immerjs/immer).
+`La Taverne` is an elementary [Flux](https://facebook.github.io/flux/docs/in-depth-overview) implementation using and [`Immer`](https://github.com/immerjs/immer).
+
+It provides an easy optional integration with React using custom **hooks**.
 
 <p align="center"><img  height="280px"  src="./docs/taverne.png"></p>
 
