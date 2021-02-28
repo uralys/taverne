@@ -33,8 +33,8 @@ const buildHooks = () => {
   esbuild
     .build({
       banner,
-      format: 'cjs',
-      entryPoints: ['src/hooks/index.js'],
+      format: 'esm',
+      entryPoints: ['src/hooks/context-provider.js'],
       bundle: true,
       external: ['deep-equal', 'react'],
       outfile,

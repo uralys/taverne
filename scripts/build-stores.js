@@ -37,6 +37,7 @@ const buildStores = (format, minify) => {
       sourcemap: true,
       metafile,
       outfile,
+      external: ['immer'],
       loader: {'.js': 'jsx'},
       define: {
         'process.env.NODE_ENV': '"production"'
