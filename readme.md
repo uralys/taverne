@@ -1,13 +1,17 @@
-# ⛵ hookstores <a href="https://www.npmjs.com/package/hookstores"><img src="https://img.shields.io/npm/v/hookstores?color=%23123" alt="Current npm package version." /></a> <a href="https://www.npmjs.com/package/hookstores"><img src="https://img.shields.io/github/license/uralys/hookstores" alt="MIT" /></a> <a href="https://reactjs.org/docs/hooks-custom.html"><img src="https://img.shields.io/badge/react-hooks-5908d2.svg" alt="hooks" /></a> <a href="https://immerjs.github.io/immer/docs/produce"><img src="https://img.shields.io/badge/immer-produce-5908d2.svg" alt="immer" /> </a>
+# La Taverne
 
-`Hookstores` is an elementary [Flux](https://facebook.github.io/flux/docs/in-depth-overview) implementation using `React` hooks and [`Immer`](https://github.com/immerjs/immer).
+<a href="https://www.npmjs.com/package/taverne"><img src="https://img.shields.io/npm/v/taverne?color=%23123" alt="Current npm package version." /></a> <a href="https://www.npmjs.com/package/taverne"><img src="https://img.shields.io/github/license/uralys/taverne" alt="MIT" /></a> <a href="https://reactjs.org/docs/hooks-custom.html"><img src="https://img.shields.io/badge/react-hooks-5908d2.svg" alt="hooks" /></a> <a href="https://immerjs.github.io/immer/docs/produce"><img src="https://img.shields.io/badge/immer-produce-5908d2.svg" alt="immer" /> </a>
+
+`Taverne` is an elementary [Flux](https://facebook.github.io/flux/docs/in-depth-overview) implementation using `React` hooks and [`Immer`](https://github.com/immerjs/immer).
+
+<p align="center"><img  height="200px"  src="./docs/taverne.png"></p>
 
 ![action->dispatcher->store->view](https://facebook.github.io/flux/img/overview/flux-simple-f8-diagram-1300w.png)
 
 ## 📦 installation
 
 ```sh
-> npm i --save hookstores
+> npm i --save taverne
 ```
 
 Then wrap your React app with the context Provider:
@@ -15,25 +19,25 @@ Then wrap your React app with the context Provider:
 ```js
 import React from 'react';
 import {render} from 'react-dom';
-import {Hookstores} from 'hookstores';
+import {Taverne} from 'taverne';
 
 render(
-  <Hookstores>
+  <Taverne>
     <App />
-  </Hookstores>,
+  </Taverne>,
   container
 );
 ```
 
 ## 🎨 idea
 
-- `Hookstores` allows to organize your React app State in one or many stores.
+- `Taverne` allows to organize your React app State in one or many stores.
 - Access local parts of this global state with `hooks`
 - You can listen to specific parts of specific stores, to allow accurate local rendering from your global app state (see the [advanced section](#-advanced-usage)).
 
 ```js
 const ItemsContainer = props => {
-  const {useItemsStore} = useHookstores();
+  const {useItemsStore} = useTaverne();
   const {items} = useItemsStore();
 
   return <ItemsComponent items={items} />;
@@ -42,17 +46,17 @@ const ItemsContainer = props => {
 
 ## 🛠 setup
 
-Here is the path to follow to setup Hookstores on your app:
+Here is the path to follow to setup Taverne on your app:
 
 - 1: write `reactions`: the way your store must react to actions.
-- 2: give your stores to `<Hookstores>`
+- 2: give your stores to `<Taverne>`
 - 3: read stores data in your containers
 - 4: dispatch actions to trigger `reactions`.
 
 <details>
 <summary>🔍 Illustration</summary>
 
-In the following, let's illustrate how to use `Hookstores` with:
+In the following, let's illustrate how to use `Taverne` with:
 
 - a store of `Items` and its fetch function
 - a `container` plugged to this store,
@@ -81,7 +85,7 @@ export default itemsStore;
 You should use one store for each feature.
 (🔍 here the `itemsStore` to deal with the `Items`)
 
-`Hookstores` will create the actual store for each of them to:
+`Taverne` will create the actual store for each of them to:
 
 - handle an immutable state with [Immer](https://immerjs.github.io/immer/docs/introduction),
 - listen to actions to trigger the appropriate `reactions`,
@@ -163,13 +167,13 @@ export {FETCH_ITEMS};
 
 </details>
 
-## 🏁 setup the Hookstores provider with these stores
+## 🏁 setup the Taverne provider with these stores
 
-Once all stores are ready, and pass them as `stores` parameter to `<Hookstores>`.
+Once all stores are ready, and pass them as `stores` parameter to `<Taverne>`.
 
 This is where you define names your stores.
 
-`Hookstores` will simply create hooks with the same names with the `use` prefix.
+`Taverne` will simply create hooks with the same names with the `use` prefix.
 
 ```js
 whatheverNameStore ===> useWhatheverNameStore()
@@ -181,7 +185,7 @@ whatheverNameStore ===> useWhatheverNameStore()
 /* ./index.js */
 import React from 'react';
 import {render} from 'react-dom';
-import {Hookstores} from 'hookstores';
+import {Taverne} from 'Taverne';
 
 import itemsStore from './features/items/store.js';
 import anyOtherStore from './features/whatever/store.js';
@@ -192,17 +196,17 @@ const stores = {
 };
 
 render(
-  <Hookstores stores={stores}>
+  <Taverne stores={stores}>
     <App />
-  </Hookstores>,
+  </Taverne>,
   container
 );
 ```
 
-here `Hookstores` will create those hooks:
+here `Taverne` will create those hooks:
 
 ```js
-const {useItemsStore, useAnyOtherStore} = useHookstores();
+const {useItemsStore, useAnyOtherStore} = useTaverne();
 ```
 
 ## 🍕 Using those stores in your containers
@@ -220,7 +224,7 @@ import React from 'react';
 import ItemsComponent from './component';
 
 const ItemsContainer = props => {
-  const {useItemsStore} = useHookstores();
+  const {useItemsStore} = useTaverne();
   const {items} = useItemsStore();
 
   return <ItemsComponent items={items} />;
@@ -237,7 +241,7 @@ Use [`prop drilling`](https://kentcdodds.com/blog/prop-drilling) from your conta
 import {SELECT_ITEM} from './features/items/store.js';
 
 const ItemsContainer = props => {
-  const {dispatch} = useHookstores();
+  const {dispatch} = useTaverne();
 
   const selectItem = id => () => {
     dispatch({
@@ -252,7 +256,7 @@ const ItemsContainer = props => {
 
 ## 🔥 advanced usage
 
-The whole point of `Hookstores` is to be able to perform extremely local rendering.
+The whole point of `Taverne` is to be able to perform extremely local rendering.
 
 So, rather than the listening for the whole state updates, you can update rendering depending on specific updates in a store.
 
@@ -269,7 +273,7 @@ Now your `props` will change only when one of these mapping is updated in the st
 
 ```js
 const ItemsContainer = props => {
-  const {useItemsStore} = useHookstores();
+  const {useItemsStore} = useTaverne();
   const {items, other} = useItemsStore(propsMapping);
 
   return <ItemsComponent items={items} other={other} />;
@@ -284,8 +288,12 @@ read this [doc](docs/motivation.md)
 
 ## 🏗️ development
 
-[![peerDeps](https://david-dm.org/uralys/hookstores/peer-status.svg)](https://david-dm.org/uralys/hookstores?type=peer)
-[![devDeps](https://david-dm.org/uralys/hookstores/dev-status.svg)](https://david-dm.org/uralys/hookstores?type=dev)
-[![deps](https://david-dm.org/uralys/hookstores/status.svg)](https://david-dm.org/uralys/hookstores)
+[![peerDeps](https://david-dm.org/uralys/taverne/peer-status.svg)](https://david-dm.org/uralys/taverne?type=peer)
+[![devDeps](https://david-dm.org/uralys/taverne/dev-status.svg)](https://david-dm.org/uralys/taverne?type=dev)
+[![deps](https://david-dm.org/uralys/taverne/status.svg)](https://david-dm.org/uralys/taverne)
 
 local dev [tips](docs/dev.md)
+
+## credits
+
+tavern: <https://www.deviantart.com/brandonstarr/art/Colored-Pirate-Tavern-210784171>

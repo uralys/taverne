@@ -1,8 +1,8 @@
 {
-  "name": "hookstores",
-  "version": "1.10.1",
+  "name": "taverne",
+  "version": "1.11.0",
   "description": "Elementary Flux implementation for your state management in React",
-  "repository": "https://github.com/uralys/hookstores",
+  "repository": "https://github.com/uralys/taverne",
   "license": "MIT",
   "keywords": [
     "flux",
@@ -11,8 +11,8 @@
     "react-hooks"
   ],
   "author": "@chrisdugne",
-  "main": "cjs/hookstores.js",
-  "module": "esm/hookstores.js",
+  "main": "cjs/taverne.js",
+  "module": "esm/taverne.js",
   "sideEffects": false,
   "scripts": {
     "prebuild": "rimraf ./dist ./dist.package",

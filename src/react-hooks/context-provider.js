@@ -9,12 +9,12 @@ const Context = createContext();
 
 // -----------------------------------------------------------------------------
 
-const useHookstores = () => {
+const useTaverne = () => {
   const context = useContext(Context);
 
   if (!context) {
     throw new Error(
-      `❌ [hookstores] useHookstores must be used within a provider <Hookstores>`
+      `❌ [hookstores] useTaverne must be used within a provider <Hookstores>`
     );
   }
 
@@ -23,7 +23,7 @@ const useHookstores = () => {
 
 // -----------------------------------------------------------------------------
 
-const Hookstores = ({dispatch, stores, children}) => {
+const Taverne = ({dispatch, stores, children}) => {
   const hooks = createHooks(stores);
 
   return (
@@ -33,6 +33,6 @@ const Hookstores = ({dispatch, stores, children}) => {
 
 // -----------------------------------------------------------------------------
 
-export {Hookstores, useHookstores};
+export {Taverne, useTaverne};
 
 // -----------------------------------------------------------------------------
