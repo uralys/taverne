@@ -17,7 +17,6 @@
 ## 🎨 idea
 
 - `Taverne` allows to organize your app State in one or many stores.
-- Access local parts of this global state with `hooks`
 - You can listen to specific parts of specific stores, to allow accurate local rendering from your global app state (see the [advanced section](#-advanced-usage)).
 
 ```js

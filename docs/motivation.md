@@ -16,24 +16,31 @@
 
   - That is the lib **the closest** to the way I want to manage my state, but ❌ I want to keep my redux-like reducers, actions and container connect function to map my stores locally to the required props for the finest re-rendering, and no extra-recipes (back to point 1)
 
-  - Try to instanciate twice your app with `zustand`: ❌ your stores are not scoped, you need to scope them manually. That's where a React context Provider is useful, and I chose to wrap my React app with a Provider to use many `Hookstores` in different apps in one single page.
+  - Try to instanciate twice your app with `zustand`: ❌ your stores are not scoped, you need to scope them manually. That's where a React context Provider is useful, and I chose to wrap my React app with a Provider to use many `La Taverne` in different apps in one single page.
 
-- Now, experimenting with the first versions of Hookstores, I got quite early on the issue of calling **async functions** before to reduce a store state.
+- Now, experimenting with the first versions of La Taverne, I got quite early on the issue of calling **async functions** before to reduce a store state.
   Which is resolved by Redux:
 
   - [using a thunk middleware](https://github.com/reduxjs/redux-thunk#motivation), which is indeed a smart hack, but leads to overload again the Redux workflow with more opacity: ❌ you may dispatch Actions OR Thunks. If you go for thunks for async calls, a middleware will call them for you.
 
   - using `Redux saga` or `Redux Loop` ❌ a framework over the framework.
 
----
+## The idea with `La Taverne` is
 
-### The idea with `Hookstores` is:
+<p align="center"><img  height="280px"  src="./docs/taverne.png"></p>
 
-- ✅ to stay within React **only**,
+### stores
+
 - ✅ to implement a simple [Flux architecture](https://facebook.github.io/flux/docs/in-depth-overview)
-- ✅ **splitting** the global app state into **stores** states, then using React hooks to access `{...props} = useMyStore()` anywhere,
-- ✅ applying **local rendering**, by mapping these stores states to [containers](https://medium.com/@learnreact/container-components-c0e67432e005), using React hooks `useState` and `useEffect`.
-- ✅ add `propsMapping` to update `props` only when there _is_ an update on this store, to provide even more accurate re-rendering.
+- ✅ **splitting** the global app state into **stores** states
 - ✅ to `dispatch` actions for which stores will have `reactions`:
   - reduce this action immediately.
   - or perform a function before.
+
+### taverne/hooks
+
+provide an easy React integration
+
+- ✅ to allow simple React integration with **hooks** and a **Context Provider** to access `{...props} = useMyStore()` anywhere,
+- ✅ applying **local rendering**, by mapping these stores states to [containers](https://medium.com/@learnreact/container-components-c0e67432e005), using React hooks `useState` and `useEffect`.
+- ✅ add `propsMapping` to update `props` only when there _is_ an update on this store, to provide even more accurate re-rendering.

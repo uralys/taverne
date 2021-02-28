@@ -6,9 +6,9 @@ const DIST = 'dist';
 const bundleName = 'taverne';
 
 const banner = `/**
- * ⛵ La Taverne v${pkg.version} - stores
+ * ⛵ La Taverne v${pkg.version}
  * (c) Uralys, Christophe Dugne-Esquevin
- * https://github.com/uralys/hookstores
+ * https://github.com/uralys/taverne
  * @license MIT
  *
  * 🔥 BUNDLED with esbuild:

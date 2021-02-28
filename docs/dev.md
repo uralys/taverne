@@ -8,9 +8,9 @@ Linking manually the parent React turned out to be a solution:
 
 ```sh
 > cd path/to/your/project
-> npm link hookstores
+> npm link taverne
 > rm -rf node_modules/react
-> ln -s ~/absolute/path/to/hookstores/node_modules/react ~/absolute/path/to/your/project/node_modules/react
+> ln -s ~/absolute/path/to/taverne/node_modules/react ~/absolute/path/to/your/project/node_modules/react
 ```
 
 then use rollup for every changes to `src`
