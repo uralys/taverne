@@ -25,9 +25,9 @@
 
   - using `Redux saga` or `Redux Loop` ❌ a framework over the framework.
 
-## The idea with `La Taverne` is
+<p align="center"><img  height="280px"  src="./taverne.png"></p>
 
-<p align="center"><img  height="280px"  src="./docs/taverne.png"></p>
+## The idea with `La Taverne` is
 
 ### stores
 
