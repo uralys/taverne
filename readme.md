@@ -1,6 +1,6 @@
 # La Taverne
 
-<a href="https://www.npmjs.com/package/taverne"><img src="https://img.shields.io/npm/v/taverne?color=%23123" alt="Current npm package version." /></a> <a href="https://www.npmjs.com/package/taverne"><img src="https://img.shields.io/github/license/uralys/taverne" alt="MIT" /></a> <a href="https://reactjs.org/docs/hooks-custom.html"><img src="https://img.shields.io/badge/react-hooks-5908d2.svg" alt="hooks" /></a> <a href="https://immerjs.github.io/immer/docs/produce"><img src="https://img.shields.io/badge/immer-produce-5908d2.svg" alt="immer" /> </a>
+<a href="https://www.npmjs.com/package/taverne"><img src="https://img.shields.io/npm/v/taverne?color=%23123" alt="Current npm package version." /></a> <a href="https://www.npmjs.com/package/taverne"><img src="https://img.shields.io/github/license/uralys/taverne" alt="MIT" /></a> <a href="https://immerjs.github.io/immer/docs/produce"><img src="https://img.shields.io/badge/immer-produce-5908d2.svg" alt="immer" /> </a>
 
 `La Taverne` is an elementary [Flux](https://facebook.github.io/flux/docs/in-depth-overview) implementation to manage a global app state.
 
@@ -94,6 +94,8 @@ const doSomethingInThisStore = {
 
 ## 🎨 React integration
 
+<a href="https://reactjs.org/docs/hooks-custom.html"><img src="https://img.shields.io/badge/react-hooks-5908d2.svg" alt="hooks" /></a>
+
 `La Taverne` has a context Provider and build custom hooks to access you stores anywhere
 
 ```js
@@ -162,7 +164,10 @@ const {dispatch, stores} = createLaTaverne({bookStore}, [devtools]);
 
 local dev [tips](docs/dev.md)
 
-## about
+## ❓ about La Taverne
+
+<a href="https://www.npmjs.com/package/taverne"><img src="https://img.shields.io/github/license/uralys/taverne" alt="MIT" /></a>
 
 📚 Read the project [motivation](docs/motivation.md)
+
 🎨 Tavern drawing: <https://www.deviantart.com/brandonstarr/art/Colored-Pirate-Tavern-210784171>
