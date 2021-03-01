@@ -128,13 +128,19 @@ You can listen to specific parts of specific stores, to allow [accurate local re
 
 ## 🔆 Middlewares
 
-You can provide more generic middlewares to react to any actions, by impementing 2 functions: `onCreate`, `onDispatch`
+You can create more generic middlewares to operate any actions:
 
 ```js
-const middleware = {
+const customMiddleware = {
   onCreate: (dispatch, stores) => {},
   onDispatch: (action, dispatch, stores) => {}
 };
+```
+
+Then instanciate `La Taverne` with your list of middlewares as 2nd parameter:
+
+```js
+const {dispatch, stores} = createLaTaverne({bookStore}, [customMiddleware]);
 ```
 
 example: plugging the [redux devtools extension](https://github.com/reduxjs/redux-devtools) with this [middleware](src/middlewares/devtools.js)
