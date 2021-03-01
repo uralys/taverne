@@ -23,9 +23,6 @@
     "prerelease": "npm run build && npm run build:package",
     "release": "npm publish ./dist.package"
   },
-  "peerDependencies": {
-    "react": "^16.0.0 || ^17.0.0"
-  },
   "dependencies": {
     "deep-equal": "^2.0.5",
     "immer": "^8.0.1"

@@ -22,7 +22,7 @@
   "globals": {},
   "settings": {
     "react": {
-      "version": "detect"
+      "version": "17"
     }
   }
 }
