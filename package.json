@@ -20,6 +20,7 @@
     "build:package": "sh scripts/build-package.sh",
     "lint": "eslint src",
     "test": "ava",
+    "ncu": "npm-check-updates",
     "prerelease": "npm run build && npm run build:package",
     "release": "npm publish ./dist.package"
   },
@@ -33,13 +34,14 @@
     "@babel/register": "^7.13.8",
     "ava": "^3.15.0",
     "babel-eslint": "^10.0.3",
-    "esbuild": "^0.8.51",
-    "eslint": "^7.16.0",
-    "eslint-config-prettier": "^7.1.0",
+    "esbuild": "^0.8.53",
+    "eslint": "^7.21.0",
+    "eslint-config-prettier": "^8.1.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-react": "^7.21.5"
+    "eslint-plugin-promise": "^4.3.1",
+    "eslint-plugin-react": "^7.22.0",
+    "npm-check-updates": "^11.1.9"
   }
 }
