@@ -26,9 +26,9 @@ const createDispatch = (stores, middlewares) => {
 
 // -----------------------------------------------------------------------------
 
-const createStores = (definitions, middlewares = []) => {
-  const stores = Object.keys(definitions).reduce((acc, storeKey) => {
-    const {initialState, reactions} = definitions[storeKey];
+const createLaTaverne = (storeDefinitions, middlewares = []) => {
+  const stores = Object.keys(storeDefinitions).reduce((acc, storeKey) => {
+    const {initialState, reactions} = storeDefinitions[storeKey];
     const store = createStore(storeKey, initialState, reactions);
 
     return {
@@ -48,4 +48,4 @@ const createStores = (definitions, middlewares = []) => {
 
 // -----------------------------------------------------------------------------
 
-export default createStores;
+export default createLaTaverne;

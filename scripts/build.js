@@ -1,5 +1,5 @@
 const buildHooks = require('./build-hooks');
-const buildStores = require('./build-stores');
+const buildTavern = require('./build-tavern');
 
 console.log('☢️  warming up esbuild...');
 
@@ -10,7 +10,7 @@ const formats = [
 ];
 
 formats.forEach(({format, minify}) => {
-  buildStores(format, minify);
+  buildTavern(format, minify);
 });
 
 buildHooks();

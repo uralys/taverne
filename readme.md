@@ -2,9 +2,9 @@
 
 <a href="https://www.npmjs.com/package/taverne"><img src="https://img.shields.io/npm/v/taverne?color=%23123" alt="Current npm package version." /></a> <a href="https://www.npmjs.com/package/taverne"><img src="https://img.shields.io/github/license/uralys/taverne" alt="MIT" /></a> <a href="https://reactjs.org/docs/hooks-custom.html"><img src="https://img.shields.io/badge/react-hooks-5908d2.svg" alt="hooks" /></a> <a href="https://immerjs.github.io/immer/docs/produce"><img src="https://img.shields.io/badge/immer-produce-5908d2.svg" alt="immer" /> </a>
 
-`La Taverne` is an elementary [Flux](https://facebook.github.io/flux/docs/in-depth-overview) implementation to handle you global app state.
+`La Taverne` is an elementary [Flux](https://facebook.github.io/flux/docs/in-depth-overview) implementation to manage a global app state.
 
-It provides an easy optional integration with React using custom **hooks**.
+It provides an optional, yet easy integration with React using custom **hooks**.
 
 <p align="center"><img  height="280px"  src="./docs/taverne.png"></p>
 
@@ -16,23 +16,48 @@ It provides an easy optional integration with React using custom **hooks**.
 > npm i --save taverne
 ```
 
-## 🎨 idea
+## 📓 Create a store
 
-- `Taverne` allows to organize your app State in one or many stores.
-- You can listen to specific parts of specific stores, to allow accurate local rendering from your global app state (example with React in [this section](docs/react.md#-advanced-usage)).
+On your app level, a "store" is an `initialState` and a list of `reactions`.
 
 ```js
-const ItemsContainer = props => {
-  const {useItemsStore} = useTaverne();
-  const {items} = useItemsStore();
+const ADD_BOOK = 'ADD_BOOK';
 
-  return <ItemsComponent items={items} />;
+const addBook = {
+  on: ADD_BOOK,
+  reduce: (state, payload) => {
+    state.nbBooks++;
+  }
 };
+
+const reactions = [addBook];
+const bookStore = {
+  initialState: {nbBooks: 0},
+  reactions: [addBook]
+};
+
+export default bookStore;
+export {ADD_BOOK};
 ```
 
-## 🔆 Reactions
+## 🐿️ Instanciate your tavern
 
-Here is a `reaction`:
+Once your reactions are ready, you can instanciate your `stores` and `dispatch`:
+
+```js
+import createLaTaverne from 'taverne';
+import bookStore from './features/books/store';
+import potionStore from './features/potions/store';
+import handcraftStore from './features/handcrafts/store';
+
+const {dispatch, stores} = createLaTaverne({
+  bookStore,
+  potionStore,
+  handcraftStore
+});
+```
+
+## 🧚 Reactions
 
 ```js
 const doSomethingInThisStore = {
@@ -67,9 +92,62 @@ const doSomethingInThisStore = {
 
   Then `reduce` will be called with the result once it's done.
 
-## 📚 motivation
+## 🎨 React integration
 
-read this [doc](docs/motivation.md)
+`La Taverne` has a context Provider and build custom hooks to access you stores anywhere
+
+```js
+/* src/app.js */
+import React from 'react';
+import {render} from 'react-dom';
+import {Taverne} from 'taverne/hooks';
+
+render(
+  <Taverne dispatch={dispatch} stores={stores}>
+    <App id={id} />
+  </Taverne>,
+  container
+);
+```
+
+```js
+/* src/feature/books/container.js */
+import {useTaverne} from 'taverne/hooks';
+
+const BooksContainer = props => {
+  const {useBooksStore} = useTaverne();
+  const {books} = useBooksStore();
+
+  return <BooksComponent books={books} />;
+};
+```
+
+See the complete React integration [steps here](docs/react.md).
+
+You can listen to specific parts of specific stores, to allow [accurate local rendering](docs/react.md#-advanced-usage) from your global app state.
+
+## 🔆 Middlewares
+
+You can provide more generic middlewares to react to any actions, by impementing 2 functions: `onCreate`, `onDispatch`
+
+```js
+const middleware = {
+  onCreate: (dispatch, stores) => {},
+  onDispatch: (action, dispatch, stores) => {}
+};
+```
+
+example: plugging the [redux devtools extension](https://github.com/reduxjs/redux-devtools) with this [middleware](src/middlewares/devtools.js)
+
+## 🐛 Redux devtools
+
+```js
+import createLaTaverne from 'taverne';
+import {devtools} from 'taverne/middlewares';
+import bookStore from './features/books/store';
+
+const {dispatch, stores} = createLaTaverne({bookStore}, [devtools]);
+```
 
 ## 🏗️ development
 
@@ -78,6 +156,7 @@ read this [doc](docs/motivation.md)
 
 local dev [tips](docs/dev.md)
 
-## credits
+## about
 
-tavern: <https://www.deviantart.com/brandonstarr/art/Colored-Pirate-Tavern-210784171>
+📚 Read the project [motivation](docs/motivation.md)
+🎨 Tavern drawing: <https://www.deviantart.com/brandonstarr/art/Colored-Pirate-Tavern-210784171>

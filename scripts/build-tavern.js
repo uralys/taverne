@@ -23,7 +23,7 @@ const banner = `/**
  */
 `;
 
-const buildStores = (format, minify) => {
+const buildTavern = (format, minify) => {
   const outfile = `${DIST}/${format}/${bundleName}${minify ? '.min' : ''}.js`;
   const metafile = `${DIST}/meta/meta-${format}${minify ? '-min' : ''}.json`;
 
@@ -32,7 +32,7 @@ const buildStores = (format, minify) => {
       banner,
       format,
       minify,
-      entryPoints: ['src/stores/create-stores.js'],
+      entryPoints: ['src/stores/create-tavern.js'],
       bundle: true,
       sourcemap: true,
       metafile,
@@ -57,4 +57,4 @@ const buildStores = (format, minify) => {
     .catch(() => process.exit(1));
 };
 
-module.exports = buildStores;
+module.exports = buildTavern;
