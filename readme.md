@@ -70,7 +70,7 @@ const doSomethingInThisStore = {
     */
     state.foo = 'bar';
   },
-  perform: (parameters, getState, dispatch) => {
+  perform: (parameters, dispatch, getState, stores) => {
     /*
       Optional sync or async function.
       It will be called before `reduce`

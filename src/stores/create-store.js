@@ -45,7 +45,7 @@ const createStore = (storeKey, initialState, reactions) => {
       reactions.forEach(({on, perform, reduce}) => {
         if (on === type) {
           if (typeof perform === 'function') {
-            const result = perform(payload, getState, dispatch, stores);
+            const result = perform(payload, dispatch, getState, stores);
             if (result && result.then) {
               result.then(_payload => {
                 applyReducer(reduce, _payload);
