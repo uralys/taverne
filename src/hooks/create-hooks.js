@@ -49,7 +49,8 @@ const mapStateToProps = (state, _propsMapping = null) => {
 
 const createUpdater = (setProps, propsMapping = null) => {
   const onUpdate = (storeState, previousState) => {
-    const prevProps = mapStateToProps(previousState, propsMapping);
+    const prevProps =
+      previousState && mapStateToProps(previousState, propsMapping);
     const newProps = mapStateToProps(storeState, propsMapping);
 
     if (!deepEqual(newProps, prevProps)) {
