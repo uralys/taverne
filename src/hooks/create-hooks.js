@@ -23,9 +23,15 @@ const hookName = (storeKey = 'store') => {
 
 // -----------------------------------------------------------------------------
 
-const mapStateToProps = (state, propsMapping = null) => {
-  if (!propsMapping) {
+const mapStateToProps = (state, _propsMapping = null) => {
+  if (!_propsMapping) {
     return state;
+  }
+
+  let propsMapping = _propsMapping;
+
+  if (typeof _propsMapping === 'function') {
+    propsMapping = _propsMapping(state);
   }
 
   const selectedProps = Object.keys(propsMapping).reduce(
