@@ -1,8 +1,8 @@
 import test from 'ava';
-import createStores from '../src/stores/create-stores';
+import createTavern from '../src/stores/create-tavern';
 
 test('simple definition', t => {
-  const {stores} = createStores({
+  const {stores} = createTavern({
     plop: ''
   });
 

@@ -14,15 +14,6 @@ const useIsoLayoutEffect =
 
 // -----------------------------------------------------------------------------
 
-const hookName = (storeKey = 'store') => {
-  const upper = storeKey[0].toUpperCase();
-  const following = storeKey.slice(1, storeKey.length);
-
-  return `use${upper}${following}`;
-};
-
-// -----------------------------------------------------------------------------
-
 const mapStateToProps = (state, _propsMapping = null) => {
   if (!_propsMapping) {
     return state;
@@ -63,8 +54,8 @@ const createUpdater = (setProps, propsMapping = null) => {
 
 // -----------------------------------------------------------------------------
 
-const createUseStore = store =>
-  function useStore(propsMapping = null) {
+const createPourHook = store =>
+  function pour(propsMapping = null) {
     const [props, setProps] = useState(store.initialState);
     const onUpdate = createUpdater(setProps, propsMapping);
 
@@ -78,15 +69,4 @@ const createUseStore = store =>
 
 // -----------------------------------------------------------------------------
 
-const createHooks = stores =>
-  Object.keys(stores).reduce(
-    (acc, storeKey) => ({
-      ...acc,
-      [hookName(storeKey)]: createUseStore(stores[storeKey])
-    }),
-    {}
-  );
-
-// -----------------------------------------------------------------------------
-
-export default createHooks;
+export default createPourHook;
