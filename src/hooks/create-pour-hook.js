@@ -60,7 +60,7 @@ const createUpdater = (setProps, propsMapping = null) => {
 
 const createPourHook = store =>
   function pour(propsMapping = null) {
-    const [props, setProps] = useState(store.initialState);
+    const [props, setProps] = useState();
     const onUpdate = createUpdater(setProps, propsMapping);
 
     useIsoLayoutEffect(() => {
@@ -68,7 +68,7 @@ const createPourHook = store =>
       return disconnect;
     }, []);
 
-    return {...props};
+    return props ? {...props} : undefined;
   };
 
 // -----------------------------------------------------------------------------
