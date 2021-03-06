@@ -15,7 +15,7 @@
   "module": "esm/taverne.js",
   "sideEffects": false,
   "scripts": {
-    "prebuild": "rimraf ./dist ./dist.package",
+    "prebuild": "rm -rf ./dist ./dist.package",
     "build": "node scripts/build.js",
     "build:package": "sh scripts/build-package.sh",
     "lint": "eslint src",
@@ -34,6 +34,7 @@
     "@babel/register": "^7.13.8",
     "ava": "^3.15.0",
     "babel-eslint": "^10.0.3",
+    "chalk": "^2.4.2",
     "esbuild": "^0.8.53",
     "eslint": "^7.21.0",
     "eslint-config-prettier": "^8.1.0",
