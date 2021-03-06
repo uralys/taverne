@@ -46,9 +46,15 @@ const createWaitress = (brewPath, state, served) =>
 // -----------------------------------------------------------------------------
 
 const createStore = reducers => {
-  const initialState = Object.keys(reducers).map(key => ({
-    [key]: reducers[key].initialState
-  }));
+  const initialState = Object.keys(reducers).reduce(
+    (acc, key) => ({
+      ...acc,
+      [key]: reducers[key].initialState
+    }),
+    {}
+  );
+
+  // -------------------------------------------------
 
   let state = initialState;
   const subscriptions = [];

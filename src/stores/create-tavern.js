@@ -24,16 +24,6 @@ const createDispatch = (store, middlewares) => {
 
 const createLaTaverne = (reducers, middlewares = []) => {
   const store = createStore(reducers);
-
-  // const stores = Object.keys(reducers).reduce((acc, reducerKey) => {
-  //   const {initialState, reactions} = reducers[reducerKey];
-
-  //   return {
-  //     ...acc,
-  //     [reducerKey]: store
-  //   };
-  // }, {});
-
   const dispatch = createDispatch(store, middlewares);
 
   middlewares.forEach(middleware => {
