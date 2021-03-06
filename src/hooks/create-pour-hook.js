@@ -21,6 +21,10 @@ const mapStateToProps = (state, _propsMapping = null) => {
 
   let propsMapping = _propsMapping;
 
+  if (typeof _propsMapping === 'string') {
+    return get(propsMapping, state);
+  }
+
   if (typeof _propsMapping === 'function') {
     propsMapping = _propsMapping(state);
   }
