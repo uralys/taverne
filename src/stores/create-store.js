@@ -39,7 +39,7 @@ const createWaitress = (nestedPath, getState, setState) =>
       reduce(draftState, payload)
     );
 
-    setState(nestedPath, newState);
+    setState(newState, nestedPath);
   };
 
 // -----------------------------------------------------------------------------
