@@ -42,14 +42,20 @@ const mapStateToProps = (state, _propsMapping = null) => {
 
 // -----------------------------------------------------------------------------
 
-const createUpdater = (setProps, propsMapping = null) => {
+const createUpdater = (setProps, propsMapping = null, defaultPouring) => {
   const onUpdate = (storeState, previousState) => {
     const prevProps =
       previousState && mapStateToProps(previousState, propsMapping);
     const newProps = mapStateToProps(storeState, propsMapping);
 
-    if (!deepEqual(newProps, prevProps)) {
-      setProps(newProps);
+    if (newProps !== undefined) {
+      if (!deepEqual(newProps, prevProps)) {
+        setProps(newProps);
+      }
+    } else {
+      if (!deepEqual(defaultPouring, prevProps)) {
+        setProps(defaultPouring);
+      }
     }
   };
 
@@ -59,9 +65,9 @@ const createUpdater = (setProps, propsMapping = null) => {
 // -----------------------------------------------------------------------------
 
 const createPourHook = store =>
-  function pour(propsMapping = null) {
+  function pour(propsMapping = null, defaultPouring) {
     const [props, setProps] = useState();
-    const onUpdate = createUpdater(setProps, propsMapping);
+    const onUpdate = createUpdater(setProps, propsMapping, defaultPouring);
 
     useIsoLayoutEffect(() => {
       const disconnect = connectStore(store, onUpdate);
