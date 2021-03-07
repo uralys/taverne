@@ -28,19 +28,18 @@ const processReactions = (action, reactions, waitress, dispatch, getState) => {
 
 // -----------------------------------------------------------------------------
 
-const createWaitress = (brewPath, state, served) =>
+const createWaitress = (brewPath, getState, setState) =>
   function waitress(reduce, payload) {
     if (!reduce) {
       return;
     }
-
-    const previousState = get(brewPath, state);
-    const newState = produce(previousState, draftState =>
+    const currentStoreState = getState();
+    const previousNestedState = get(brewPath, currentStoreState);
+    const newState = produce(previousNestedState, draftState =>
       reduce(draftState, payload)
     );
 
-    state[brewPath] = newState;
-    served();
+    setState(newState);
   };
 
 // -----------------------------------------------------------------------------
@@ -61,26 +60,34 @@ const createStore = reducers => {
 
   // -------------------------------------------------
 
-  const served = _previousState => {
-    const previousState = _previousState || state;
+  const getState = () => state;
+  const setState = (newState, _previousState) => {
+    const previousState = _previousState || getState();
+    state = newState;
 
     subscriptions.forEach(onUpdate => {
-      onUpdate(state, previousState);
+      onUpdate(newState, previousState);
     });
   };
+  // -------------------------------------------------
+
+  // const served = _previousState => {
+  //   const previousState = _previousState || state;
+
+  //   subscriptions.forEach(onUpdate => {
+  //     onUpdate(state, previousState);
+  //   });
+  // };
 
   // -------------------------------------------------
 
   const store = {
     initialState,
-    getState: () => state,
-    setState: _state => {
-      state = _state;
-      served();
-    },
+    getState,
+    setState,
     onDispatch: (action, dispatch, getState) => {
       Object.keys(reducers).forEach(key => {
-        const waitress = createWaitress(key, state, served);
+        const waitress = createWaitress(key, getState, setState);
         const {reactions} = reducers[key];
         processReactions(action, reactions, waitress, dispatch, getState);
       });
