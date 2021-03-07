@@ -28,18 +28,18 @@ const processReactions = (action, reactions, waitress, dispatch, getState) => {
 
 // -----------------------------------------------------------------------------
 
-const createWaitress = (brewPath, getState, setState) =>
+const createWaitress = (nestedPath, getState, setState) =>
   function waitress(reduce, payload) {
     if (!reduce) {
       return;
     }
     const currentStoreState = getState();
-    const previousNestedState = get(brewPath, currentStoreState);
+    const previousNestedState = get(nestedPath, currentStoreState);
     const newState = produce(previousNestedState, draftState =>
       reduce(draftState, payload)
     );
 
-    setState(newState);
+    setState(nestedPath, newState);
   };
 
 // -----------------------------------------------------------------------------
@@ -61,9 +61,14 @@ const createStore = reducers => {
   // -------------------------------------------------
 
   const getState = () => state;
-  const setState = (newState, _previousState) => {
-    const previousState = _previousState || getState();
-    state = newState;
+  const setState = (newState, nestedPath) => {
+    const previousState = getState();
+
+    if (nestedPath) {
+      state[nestedPath] = newState;
+    } else {
+      state = newState;
+    }
 
     subscriptions.forEach(onUpdate => {
       onUpdate(newState, previousState);
