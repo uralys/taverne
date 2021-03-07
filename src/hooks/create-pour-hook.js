@@ -68,7 +68,7 @@ const createPourHook = store =>
       return disconnect;
     }, []);
 
-    return props ? {...props} : defaultPouring;
+    return props || defaultPouring;
   };
 
 // -----------------------------------------------------------------------------

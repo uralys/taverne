@@ -10,7 +10,15 @@ test('no path should return object', t => {
   t.deepEqual(res2, foo);
 });
 
-test('wrong string path', t => {
-  const res2 = get('plop.plup.plip', {});
+test('unexistant string path', t => {
+  const res2 = get('plop.plip.plup', {});
   t.is(res2, undefined);
+});
+
+test('nested array', t => {
+  const array = [1, 2, 3];
+  const plop = {plip: {plup: array}};
+
+  const res = get('plip.plup', plop);
+  t.is(res, array);
 });
