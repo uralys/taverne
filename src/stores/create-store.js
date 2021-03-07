@@ -5,7 +5,13 @@ import get from '../lib/get';
 
 // -----------------------------------------------------------------------------
 
-const processReactions = (action, reactions, waitress, dispatch, getState) => {
+const processReactions = (
+  action,
+  reactions,
+  applyReducing,
+  dispatch,
+  getState
+) => {
   const {type, ...payload} = action;
 
   reactions.forEach(({on, perform, reduce}) => {
@@ -14,13 +20,13 @@ const processReactions = (action, reactions, waitress, dispatch, getState) => {
         const result = perform(payload, dispatch, getState);
         if (result && result.then) {
           result.then(_payload => {
-            waitress(reduce, _payload);
+            applyReducing(reduce, _payload);
           });
         } else {
-          waitress(reduce, result);
+          applyReducing(reduce, result);
         }
       } else {
-        waitress(reduce, payload);
+        applyReducing(reduce, payload);
       }
     }
   });
@@ -28,18 +34,19 @@ const processReactions = (action, reactions, waitress, dispatch, getState) => {
 
 // -----------------------------------------------------------------------------
 
-const createWaitress = (nestedPath, getState, setState) =>
-  function waitress(reduce, payload) {
+const createReducing = (nestedPath, getState, setState) =>
+  function applyReducing(reduce, payload) {
     if (!reduce) {
       return;
     }
+
     const currentStoreState = getState();
     const previousNestedState = get(nestedPath, currentStoreState);
-    const newState = produce(previousNestedState, draftState =>
+    const newNestedState = produce(previousNestedState, draftState =>
       reduce(draftState, payload)
     );
 
-    setState(newState, nestedPath);
+    setState(newNestedState, nestedPath);
   };
 
 // -----------------------------------------------------------------------------
@@ -62,7 +69,7 @@ const createStore = reducers => {
 
   const getState = () => state;
   const setState = (newState, nestedPath) => {
-    const previousState = getState();
+    const previousState = {...getState()};
 
     if (nestedPath) {
       state[nestedPath] = newState;
@@ -71,18 +78,9 @@ const createStore = reducers => {
     }
 
     subscriptions.forEach(onUpdate => {
-      onUpdate(newState, previousState);
+      onUpdate(state, previousState);
     });
   };
-  // -------------------------------------------------
-
-  // const served = _previousState => {
-  //   const previousState = _previousState || state;
-
-  //   subscriptions.forEach(onUpdate => {
-  //     onUpdate(state, previousState);
-  //   });
-  // };
 
   // -------------------------------------------------
 
@@ -92,9 +90,9 @@ const createStore = reducers => {
     setState,
     onDispatch: (action, dispatch, getState) => {
       Object.keys(reducers).forEach(key => {
-        const waitress = createWaitress(key, getState, setState);
+        const applyReducing = createReducing(key, getState, setState);
         const {reactions} = reducers[key];
-        processReactions(action, reactions, waitress, dispatch, getState);
+        processReactions(action, reactions, applyReducing, dispatch, getState);
       });
     },
     subscribe: subscription => {
