@@ -5,29 +5,7 @@ let devtools;
 
 // -----------------------------------------------------------------------------
 
-const getGlobalState = stores => {
-  const globalState = Object.keys(stores).reduce((acc, storeKey) => {
-    return {
-      ...acc,
-      [storeKey]: stores[storeKey].getState()
-    };
-  }, {});
-
-  return globalState;
-};
-
-// -----------------------------------------------------------------------------
-
-const setGlobalState = (stores, globalStateToSet) => {
-  Object.keys(stores).forEach(storeKey => {
-    const revertState = globalStateToSet[storeKey];
-    stores[storeKey].setState(revertState);
-  });
-};
-
-// -----------------------------------------------------------------------------
-
-const onCreate = (dispatch, stores) => {
+const onCreate = (dispatch, store) => {
   const extension = window && window.__REDUX_DEVTOOLS_EXTENSION__;
 
   if (!extension && process.env.NODE_ENV === 'development') {
@@ -37,13 +15,13 @@ const onCreate = (dispatch, stores) => {
     return;
   }
 
-  const initialState = getGlobalState(stores);
+  const initialState = store.getState();
   devtools.instance = extension.connect();
   devtools.instance.init(initialState);
 
   devtools.instance.subscribe(message => {
     if (message.type === 'DISPATCH' && message.state) {
-      setGlobalState(stores, JSON.parse(message.state));
+      store.setState(JSON.parse(message.state));
     } else {
       console.log(`${logPrefix} monitor message not handled:`, message);
     }
@@ -54,9 +32,9 @@ const onCreate = (dispatch, stores) => {
 
 // -----------------------------------------------------------------------------
 
-const onDispatch = (action, dispatch, stores) => {
+const onDispatch = (action, dispatch, getState) => {
   if (!devtools.instance) return;
-  devtools.instance.send(action, getGlobalState(stores));
+  devtools.instance.send(action, getState());
 };
 
 // -----------------------------------------------------------------------------

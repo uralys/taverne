@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 
 import React, {createContext, useContext} from 'react';
-import createHooks from './create-hooks';
+import createPourHook from './create-pour-hook';
 
 // -----------------------------------------------------------------------------
 
@@ -23,11 +23,11 @@ const useTaverne = () => {
 
 // -----------------------------------------------------------------------------
 
-const Taverne = ({dispatch, stores, children}) => {
-  const hooks = createHooks(stores);
+const Taverne = ({dispatch, store, children}) => {
+  const pour = createPourHook(store);
 
   return (
-    <Context.Provider value={{dispatch, ...hooks}}>{children}</Context.Provider>
+    <Context.Provider value={{dispatch, pour}}>{children}</Context.Provider>
   );
 };
 
