@@ -1,13 +1,13 @@
-# React example
+# 🔆 React example
 
 ## 🛠 setup
 
 Here is the way to follow to setup `La Taverne` on your app:
 
-- 1: Write `reactions`: the way your store must react to actions.
-- 2: Pass your stores through the provider `<Taverne>`.
-- 3: Read stores data in your containers
-- 4: Dispatch actions to trigger `reactions`.
+- 1: Write `reactions`: the way your store must reduce actions.
+- 2: Pass your instance `{dispatch, store}` through the provider `<Taverne>`.
+- 3: `pour` data in your containers
+- 4: `dispatch` actions to trigger `reactions`.
 
 <details>
 <summary>🔍 Illustration</summary>
@@ -22,37 +22,36 @@ Illustration will be marked with 🔍
 
 </details>
 
-## 📦 create a store
+## 📦 create a reducer
 
-You'll have to define a store with
+You'll have to define a reducer with
 
 - an initialState,
 - and a list of reactions.
 
 ```js
-const itemsStore = {
+const items = {
   initialState: {},
   reactions: []
 };
 
-export default itemsStore;
+export default items;
 ```
 
-You should use one store for each feature.
-(🔍 here the `itemsStore` to deal with the `Items`)
+You should use one reducer for each feature.
 
-`La Taverne` will create the actual store for each of them to:
+`La Taverne` will:
 
-- handle an immutable state with [Immer](https://immerjs.github.io/immer/docs/introduction),
+- handle an immutable nested state with [Immer](https://immerjs.github.io/immer/docs/introduction),
 - listen to actions to trigger the appropriate `reactions`,
-- emit updates to the containers when there are changes only.
+- emit updates to the containers **only when** there are changes **they need**.
 
 ![computeAction](https://user-images.githubusercontent.com/910636/103582817-e2d13600-4ede-11eb-8fbf-f0eb2a7cd3e7.png)
 
 <details>
 <summary>🔍 Example</summary>
 
-Here is the example for our illustrating `itemsStore`
+Here is the example for our illustrating `items`
 
 ```js
 /* ./features/items/store.js */
@@ -64,7 +63,7 @@ const initialState = {items: null};
 
 const fetchItems = {
   on: FETCH_ITEMS,
-  perform: async (parameters, getState) => {
+  perform: async (parameters, dispatch, getState) => {
     // This function will be called whenever {type:FETCH_ITEMS} is dispatched.
     // `getState` is provided here for convenience, to access the current store state.
 
@@ -86,17 +85,9 @@ export {FETCH_ITEMS};
 
 </details>
 
-## 🏁 setup the Taverne provider with these stores
+## 🐿️ setup the \<Taverne> provider
 
-Once all stores are ready, and pass them as `stores` parameter to `<Taverne>`.
-
-This is where you define names your stores.
-
-`Taverne` will simply create hooks with the same names with the `use` prefix.
-
-```js
-whatheverNameStore ===> useWhatheverNameStore()
-```
+Once all reducers are ready, instanciate and pass `{dispatch, store}` to the `<Taverne>` provider.
 
 🔍 Example:
 
@@ -106,35 +97,29 @@ import React from 'react';
 import {render} from 'react-dom';
 import {Taverne} from 'taverne/hooks';
 
-import itemsStore from './features/items/store.js';
-import anyOtherStore from './features/whatever/store.js';
+import items from './features/items/reducer.js';
+import anyOtherStuff from './features/whatever/reducer.js';
 
-const stores = {
-  itemsStore,
-  anyOtherStore
-};
+const {dispatch, store} = createLaTaverne({
+  items,
+  anyOtherStuff
+});
 
 render(
-  <Taverne stores={stores}>
+  <Taverne dispatch={dispatch} store={store}>
     <App />
   </Taverne>,
   container
 );
 ```
 
-here `La Taverne` will create those hooks:
-
-```js
-const {useItemsStore, useAnyOtherStore} = useTaverne();
-```
-
-## 🍕 Using those stores in your containers
+## 🍺 Pouring your global state to your containers
 
 ### storeState ➡️ props
 
-Listen to changes in a store and use in your local props by using the `useXxxxStore` hook that was created for your store.
+The `pour` hook allows to listen to changes in your global state, use the part you need in your local props.
 
-🔍 Here is the example for our illustrating `itemsStore`:
+🔍 Here is the example for our illustrating `items`:
 
 ```js
 /* ./features/items/container.js */
@@ -143,21 +128,21 @@ import React from 'react';
 import ItemsComponent from './component';
 
 const ItemsContainer = props => {
-  const {useItemsStore} = useTaverne();
-  const {items} = useItemsStore();
+  const {pour} = useTaverne();
+  const items = pour('items');
 
   return <ItemsComponent items={items} />;
 };
 ```
 
-To listen to specific changes in a store, and update your local props only on those changes, use `propsMapping` (see the [advanced section](#-advanced-usage)).
+To listen to specific changes in the global state, and update your local props only on those changes, you can use many kinds of parameters to `pour()` (see the [advanced section](#-advanced-usage)).
 
 ## 📡 dispatching actions
 
 Use [`prop drilling`](https://kentcdodds.com/blog/prop-drilling) from your containers to your components: pass functions dispatching the actions
 
 ```js
-import {SELECT_ITEM} from './features/items/store.js';
+import {SELECT_ITEM} from './features/items/reducer.js';
 
 const ItemsContainer = props => {
   const {dispatch} = useTaverne();
@@ -175,28 +160,54 @@ const ItemsContainer = props => {
 
 ## 🔥 advanced usage
 
+### local rendering
+
 The whole point of `Taverne` is to be able to perform extremely local rendering.
 
-So, rather than the listening for the whole state updates, you can update rendering depending on specific updates in a store.
+So, rather than the listening for the whole state updates, you can update rendering depending on specific updates in your global state.
 
-To do so, specify the `props` mapping you want to listen for changes, telling corresponding paths in your store.
+To do so, specify the `props` mapping you want to listen for changes, telling corresponding paths in your state.
 
 ```js
-const propsMapping = {
-  items: 'path.to.items.within.your.store',
-  other: 'plop'
+const Container = () => {
+  const {pour} = useTaverne();
+  const foo = pour('path.to.anything.within.your.store');
+
+  return <Component foo={foo} />;
 };
 ```
 
-Now your `props` will change only when one of these mapping is updated in the store.
+This way, on every store update, specific props will be extracted for the components.
+
+If those props don't change, the store won't notify your container, preventing a re-rendering: this will allow accurate local rendering from a global app state.
+
+### more pouring facilities
+
+You can map a many props in one single pouring:
 
 ```js
 const ItemsContainer = props => {
-  const {useItemsStore} = useTaverne();
-  const {items, other} = useItemsStore(propsMapping);
+  const {pour} = useTaverne();
+  const {items, other} = pour({
+    items: 'items',
+    other: 'plop.plip.plup'
+  });
 
   return <ItemsComponent items={items} other={other} />;
 };
 ```
 
-This way, on every store update, specific props will be extracted for the components, and nothing else: this will allow accurate local rendering from a global app state.
+You can also use your state to read paths depending on your state:
+
+```js
+const BookContainer = props => {
+  const {pour} = useTaverne();
+  const book = pour(state => ({
+    book: `shelves.${state.selectedShelfId}.books.${state.selectedBookId}`
+  }));
+
+  return <BookComponent book={book} />;
+};
+```
+
+cheers 🍻
