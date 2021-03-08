@@ -170,6 +170,4 @@ local dev [tips](docs/dev.md)
 
 <a href="https://www.npmjs.com/package/taverne"><img src="https://img.shields.io/github/license/uralys/taverne" alt="MIT" /></a>
 
-📚 Read the project [motivation](docs/motivation.md)
-
 🎨 Tavern drawing: <https://www.deviantart.com/brandonstarr/art/Colored-Pirate-Tavern-210784171>
