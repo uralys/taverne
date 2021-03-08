@@ -59,8 +59,11 @@ const createUpdater = (setProps, propsMapping = null) => {
 // -----------------------------------------------------------------------------
 
 const createPourHook = store =>
-  function pour(propsMapping = null, defaultPouring) {
-    const [props, setProps] = useState();
+  function pour(propsMapping = null, _default) {
+    const defaultProps =
+      _default || (typeof propsMapping === 'string' ? undefined : {});
+
+    const [props, setProps] = useState(defaultProps);
     const onUpdate = createUpdater(setProps, propsMapping);
 
     useIsoLayoutEffect(() => {
@@ -68,7 +71,7 @@ const createPourHook = store =>
       return disconnect;
     }, []);
 
-    return props || defaultPouring;
+    return props;
   };
 
 // -----------------------------------------------------------------------------
