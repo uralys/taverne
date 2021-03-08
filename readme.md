@@ -16,9 +16,26 @@ It provides an optional, yet easy integration with React using custom **hooks**.
 > npm i --save taverne
 ```
 
-## 📓 Create a store
+## 🐿️ Instanciate your store
 
-On your app level, a "store" is an `initialState` and a list of `reactions`.
+Once your reducers are ready, you can instanciate your `store` and `dispatch`:
+
+```js
+import createLaTaverne from 'taverne';
+import books from './features/books/reducer';
+import potions from './features/potions/reducer';
+import handcrafts from './features/handcrafts/reducer';
+
+const {dispatch, store} = createLaTaverne({
+  books,
+  potions,
+  handcrafts
+});
+```
+
+## 🧬 Create a reducer
+
+A "Reducer" is an `initialState` and a list of `reactions`.
 
 ```js
 const ADD_BOOK = 'ADD_BOOK';
@@ -26,38 +43,22 @@ const ADD_BOOK = 'ADD_BOOK';
 const addBook = {
   on: ADD_BOOK,
   reduce: (state, payload) => {
-    state.nbBooks++;
+    const {book} = payload;
+    state.entities.push(book);
   }
 };
 
-const reactions = [addBook];
-const bookStore = {
-  initialState: {nbBooks: 0},
+export default {
+  initialState: {entities: []},
   reactions: [addBook]
 };
 
-export default bookStore;
 export {ADD_BOOK};
 ```
 
-## 🐿️ Instanciate your tavern
-
-Once your reactions are ready, you can instanciate your `stores` and `dispatch`:
-
-```js
-import createLaTaverne from 'taverne';
-import bookStore from './features/books/store';
-import potionStore from './features/potions/store';
-import handcraftStore from './features/handcrafts/store';
-
-const {dispatch, stores} = createLaTaverne({
-  bookStore,
-  potionStore,
-  handcraftStore
-});
-```
-
 ## 🧚 Reactions
+
+- A `reaction` will be triggered when an action is dispatched with `action.type` === `on`.
 
 ```js
 const doSomethingInThisStore = {
@@ -70,7 +71,7 @@ const doSomethingInThisStore = {
     */
     state.foo = 'bar';
   },
-  perform: (parameters, dispatch, getState, stores) => {
+  perform: (parameters, dispatch, getState) => {
     /*
       Optional sync or async function.
       It will be called before `reduce`
@@ -84,8 +85,6 @@ const doSomethingInThisStore = {
 };
 ```
 
-- A `reaction` will be triggered when an action is dispatched with `action.type` === `on`.
-
 - `reduce` is called using `Immer`, so mutate the `state` exactly as you would with the `draftState` parameter in [produce](https://immerjs.github.io/immer/docs/produce).
 
 - If you have some business to do before reducing, for example calling an API, use the `perform` function, either `sync` or `async`.
@@ -96,7 +95,10 @@ const doSomethingInThisStore = {
 
 <a href="https://reactjs.org/docs/hooks-custom.html"><img src="https://img.shields.io/badge/react-hooks-5908d2.svg" alt="hooks" /></a>
 
-`La Taverne` has a context Provider and build custom hooks to access you stores anywhere
+`La Taverne` has a context Provider `<Taverne>` which provides 2 utilities:
+
+- the `pour` hook to access your global state anywhere
+- the `dispatch` function
 
 ```js
 /* src/app.js */
@@ -105,7 +107,7 @@ import {render} from 'react-dom';
 import {Taverne} from 'taverne/hooks';
 
 render(
-  <Taverne dispatch={dispatch} stores={stores}>
+  <Taverne dispatch={dispatch} store={store}>
     <App id={id} />
   </Taverne>,
   container
@@ -117,8 +119,8 @@ render(
 import {useTaverne} from 'taverne/hooks';
 
 const BooksContainer = props => {
-  const {useBooksStore} = useTaverne();
-  const {books} = useBooksStore();
+  const {dispatch, pour} = useTaverne();
+  const books = pour('books');
 
   return <BooksComponent books={books} />;
 };
@@ -126,7 +128,7 @@ const BooksContainer = props => {
 
 See the complete React integration [steps here](docs/react.md).
 
-You can listen to specific parts of specific stores, to allow [accurate local rendering](docs/react.md#-advanced-usage) from your global app state.
+You can "pour" specific parts of the state, to allow [accurate local rendering](docs/react.md#-advanced-usage) from your global app state.
 
 ## 🔆 Middlewares
 
@@ -134,15 +136,15 @@ You can create more generic middlewares to operate any actions:
 
 ```js
 const customMiddleware = {
-  onCreate: (dispatch, stores) => {},
-  onDispatch: (action, dispatch, stores) => {}
+  onCreate: (dispatch, store) => {},
+  onDispatch: (action, dispatch, getState) => {}
 };
 ```
 
 Then instanciate `La Taverne` with your list of middlewares as 2nd parameter:
 
 ```js
-const {dispatch, stores} = createLaTaverne({bookStore}, [customMiddleware]);
+const {dispatch, store} = createLaTaverne(reducers, [customMiddleware]);
 ```
 
 example: plugging the [redux devtools extension](https://github.com/reduxjs/redux-devtools) with this [middleware](src/middlewares/devtools.js)
@@ -152,9 +154,9 @@ example: plugging the [redux devtools extension](https://github.com/reduxjs/redu
 ```js
 import createLaTaverne from 'taverne';
 import {devtools} from 'taverne/middlewares';
-import bookStore from './features/books/store';
+import books from './features/books/reducer';
 
-const {dispatch, stores} = createLaTaverne({bookStore}, [devtools]);
+const {dispatch, store} = createLaTaverne({books}, [devtools]);
 ```
 
 ## 🏗️ development
