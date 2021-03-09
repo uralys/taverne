@@ -32,7 +32,7 @@ const buildHooks = () => {
 
   esbuild
     .build({
-      banner,
+      banner: {js: banner},
       format: 'esm',
       entryPoints: ['src/hooks/context-provider.js'],
       bundle: true,

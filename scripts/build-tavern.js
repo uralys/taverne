@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const pkg = require('../package.json');
 const chalk = require('chalk');
 const esbuild = require('esbuild');
@@ -25,17 +27,19 @@ const banner = `/**
 
 const buildTavern = (format, minify) => {
   const outfile = `${DIST}/${format}/${bundleName}${minify ? '.min' : ''}.js`;
-  const metafile = `${DIST}/meta/meta-${format}${minify ? '-min' : ''}.json`;
+  const metafilePath = `${DIST}/meta/meta-${format}${
+    minify ? '-min' : ''
+  }.json`;
 
   esbuild
     .build({
-      banner,
+      banner: {js: banner},
       format,
       minify,
       entryPoints: ['src/stores/create-tavern.js'],
       bundle: true,
       sourcemap: true,
-      metafile,
+      metafile: true,
       outfile,
       external: ['immer'],
       loader: {'.js': 'jsx'},
@@ -43,18 +47,20 @@ const buildTavern = (format, minify) => {
         'process.env.NODE_ENV': '"production"'
       }
     })
-    .then(() => {
+    .then(result => {
       console.log(`${chalk.green(' ✔ Success')}`);
+      const nbBytes = result.metafile.outputs[`${outfile}`].bytes;
 
       console.log(
         `   ${chalk.cyan('→')} ${chalk
           .hex('#D07CFF')
-          .bold(`${outfile}`)} ${chalk.cyan('→')} (${chalk.hex('#ffddFd')(
-          `${metafile}`
-        )})`
+          .bold(`${outfile}`)} (${nbBytes})`
       );
     })
-    .catch(() => process.exit(1));
+    .catch(e => {
+      console.log(e);
+      process.exit(1);
+    });
 };
 
 module.exports = buildTavern;
