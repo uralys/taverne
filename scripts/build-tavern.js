@@ -27,9 +27,6 @@ const banner = `/**
 
 const buildTavern = (format, minify) => {
   const outfile = `${DIST}/${format}/${bundleName}${minify ? '.min' : ''}.js`;
-  const metafilePath = `${DIST}/meta/meta-${format}${
-    minify ? '-min' : ''
-  }.json`;
 
   esbuild
     .build({
