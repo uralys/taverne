@@ -6,11 +6,14 @@
 
 It provides an optional, yet easy integration with React using custom **hooks**.
 
-Demo on <https://taverne.surge.sh/>
-
 <p align="center"><img  height="280px"  src="./docs/taverne.png"></p>
 
 ![action->dispatcher->store->view](https://facebook.github.io/flux/img/overview/flux-simple-f8-diagram-1300w.png)
+
+## 🕵️ Demo
+
+- Try live on <https://taverne.surge.sh/>
+- Demo sources: <https://github.com/uralys/taverne-website>
 
 ## 📦 installation
 
@@ -168,7 +171,7 @@ const {dispatch, store} = createLaTaverne({books}, [devtools]);
 
 local dev [tips](docs/dev.md)
 
-## ❓ about La Taverne
+## 👋 about La Taverne
 
 <a href="https://www.npmjs.com/package/taverne"><img src="https://img.shields.io/github/license/uralys/taverne" alt="MIT" /></a>
 
