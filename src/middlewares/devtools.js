@@ -8,10 +8,13 @@ let devtools;
 const onCreate = (dispatch, store) => {
   const extension = window && window.__REDUX_DEVTOOLS_EXTENSION__;
 
-  if (!extension && process.env.NODE_ENV === 'development') {
-    console.error(
-      '❌ Could not connect Redux devtools. \nTry to install and enable the extension'
-    );
+  if (!extension) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error(
+        '❌ Could not connect Redux devtools. \nTry to install and enable the extension'
+      );
+    }
+
     return;
   }
 
