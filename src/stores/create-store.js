@@ -21,6 +21,7 @@ const processReactions = (
         if (result && result.then) {
           result.then(_payload => {
             applyReducing(reduce, _payload);
+            dispatch({type: `${type}/success`});
           });
         } else {
           applyReducing(reduce, result);
@@ -34,7 +35,7 @@ const processReactions = (
 
 // -----------------------------------------------------------------------------
 
-const createReducing = (nestedPath, getState, setState, dispatch, action) =>
+const createReducing = (nestedPath, getState, setState) =>
   function applyReducing(reduce, payload) {
     if (!reduce) {
       return;
@@ -47,7 +48,6 @@ const createReducing = (nestedPath, getState, setState, dispatch, action) =>
     );
 
     setState(newNestedState, nestedPath);
-    dispatch({type: `${action.type}/success`});
   };
 
 // -----------------------------------------------------------------------------
@@ -91,13 +91,7 @@ const createStore = reducers => {
     setState,
     onDispatch: (action, dispatch, getState) => {
       Object.keys(reducers).forEach(key => {
-        const applyReducing = createReducing(
-          key,
-          getState,
-          setState,
-          dispatch,
-          action
-        );
+        const applyReducing = createReducing(key, getState, setState);
         const {reactions} = reducers[key];
         processReactions(action, reactions, applyReducing, dispatch, getState);
       });
