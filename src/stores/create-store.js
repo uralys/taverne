@@ -21,7 +21,7 @@ const processReactions = (
         if (result && result.then) {
           result.then(_payload => {
             applyReducing(reduce, _payload);
-            dispatch({type: `${type}/success`, ..._payload});
+            dispatch({type: `${type}/success`, _payload});
           });
         } else {
           applyReducing(reduce, result);
