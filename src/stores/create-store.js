@@ -12,16 +12,16 @@ const processReactions = (
   dispatch,
   getState
 ) => {
-  const {type, ...payload} = action;
+  const {type, payload} = action;
 
   reactions.forEach(({on, perform, reduce}) => {
     if (on === type) {
       if (typeof perform === 'function') {
         const result = perform(payload, dispatch, getState);
         if (result && result.then) {
-          result.then(_payload => {
-            applyReducing(reduce, _payload);
-            dispatch({type: `${type}/success`, _payload});
+          result.then(asyncResult => {
+            applyReducing(reduce, asyncResult);
+            dispatch({type: `${type}/success`, payload: asyncResult});
           });
         } else {
           applyReducing(reduce, result);

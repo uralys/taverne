@@ -21,9 +21,9 @@ test('reduce new state on dispatch', t => {
     }
   });
 
-  dispatch({type: 'add', value: 12});
-  dispatch({type: 'add', value: 12});
-  dispatch({type: 'add', value: 12});
+  dispatch({type: 'add', payload: {value: 12}});
+  dispatch({type: 'add', payload: {value: 12}});
+  dispatch({type: 'add', payload: {value: 12}});
 
   t.deepEqual(store.getState(), {
     counter: {count: 36}
