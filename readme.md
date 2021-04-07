@@ -21,26 +21,26 @@ It provides an optional, yet easy integration with React using custom **hooks**.
 > npm i --save taverne
 ```
 
-## 🐿️ Instanciate your store
+## 🐿️ Instanciate your taverne with your barrels
 
-Once your reducers are ready, you can instanciate your `store` and `dispatch`:
+Once your barrels are ready, you can instanciate your `taverne` and `dispatch`:
 
 ```js
 import createLaTaverne from 'taverne';
-import books from './features/books/reducer';
-import potions from './features/potions/reducer';
-import handcrafts from './features/handcrafts/reducer';
+import books from './barrels/books';
+import potions from './barrels/potions';
+import handcrafts from './barrels/handcrafts';
 
-const {dispatch, store} = createLaTaverne({
+const {dispatch, taverne} = createLaTaverne({
   books,
   potions,
   handcrafts
 });
 ```
 
-## 🧬 Create a reducer
+## 🧬 Create a barrel
 
-A "Reducer" is an `initialState` and a list of `reactions`.
+A "Barrel" is an `initialState` and a list of `reactions`.
 
 ```js
 const ADD_BOOK = 'ADD_BOOK';
@@ -66,13 +66,13 @@ export {ADD_BOOK};
 - A `reaction` will be triggered when an action is dispatched with `action.type` === `on`.
 
 ```js
-const doSomethingInThisStore = {
+const doSomethingWithThisBarrel = {
   on: 'ACTION_TYPE',
   reduce: (state, payload) => {
     /*
       Just update the state with your payload.
       Here, `state` is the draftState used by `Immer.produce`
-      You store will then record your next immutable state.
+      You taverne will then record your next immutable state.
     */
     state.foo = 'bar';
   },
@@ -112,7 +112,7 @@ import {render} from 'react-dom';
 import {Taverne} from 'taverne/hooks';
 
 render(
-  <Taverne dispatch={dispatch} store={store}>
+  <Taverne dispatch={dispatch} taverne={taverne}>
     <App id={id} />
   </Taverne>,
   container
@@ -133,7 +133,7 @@ const BooksContainer = props => {
 
 See the complete React integration [steps here](docs/react.md).
 
-You can "pour" specific parts of the state, to allow [accurate local rendering](docs/react.md#-advanced-usage) from your global app state.
+You can "pour" specific parts of the "taverne", to allow [accurate local rendering](docs/react.md#-advanced-usage) from your global app state.
 
 ## 🔆 Middlewares
 
@@ -149,7 +149,7 @@ const customMiddleware = {
 Then instanciate `La Taverne` with your list of middlewares as 2nd parameter:
 
 ```js
-const {dispatch, store} = createLaTaverne(reducers, [customMiddleware]);
+const {dispatch, taverne} = createLaTaverne(barrels, [customMiddleware]);
 ```
 
 example: plugging the [redux devtools extension](https://github.com/reduxjs/redux-devtools) with this [middleware](src/middlewares/devtools.js)
@@ -159,9 +159,9 @@ example: plugging the [redux devtools extension](https://github.com/reduxjs/redu
 ```js
 import createLaTaverne from 'taverne';
 import {devtools} from 'taverne/middlewares';
-import books from './features/books/reducer';
+import books from './barrels/books';
 
-const {dispatch, store} = createLaTaverne({books}, [devtools]);
+const {dispatch, taverne} = createLaTaverne({books}, [devtools]);
 ```
 
 ## 🏗️ development

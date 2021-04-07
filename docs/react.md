@@ -4,8 +4,8 @@
 
 Here is the way to follow to setup `La Taverne` on your app:
 
-- 1: Write `reactions`: the way your store must reduce actions.
-- 2: Pass your instance `{dispatch, store}` through the provider `<Taverne>`.
+- 1: Write `reactions`: the way your "taverne" must reduce actions.
+- 2: Pass your instance `{dispatch, taverne}` through the provider `<Taverne>`.
 - 3: `pour` data in your containers
 - 4: `dispatch` actions to trigger `reactions`.
 
@@ -14,17 +14,17 @@ Here is the way to follow to setup `La Taverne` on your app:
 
 In the following, let's illustrate how to use `Taverne` with:
 
-- a store of `Items` and its fetch function
-- a `container` plugged to this store,
+- a taverne of `Items` and its fetch function
+- a `container` plugged to this taverne,
 - and the `component` rendering the list of items.
 
 Illustration will be marked with 🔍
 
 </details>
 
-## 📦 create a reducer
+## 📦 create a barrel
 
-You'll have to define a reducer with
+You'll have to define a barrel with
 
 - an initialState,
 - and a list of reactions.
@@ -38,7 +38,7 @@ const items = {
 export default items;
 ```
 
-You should use one reducer for each feature.
+You should use one barrel for each feature.
 
 `La Taverne` will:
 
@@ -54,7 +54,7 @@ You should use one reducer for each feature.
 Here is the example for our illustrating `items`
 
 ```js
-/* ./features/items/store.js */
+/* ./features/items/taverne.js */
 import apiCall from './fetch-items.js';
 
 const FETCH_ITEMS = 'FETCH_ITEMS';
@@ -65,7 +65,7 @@ const fetchItems = {
   on: FETCH_ITEMS,
   perform: async (parameters, dispatch, getState) => {
     // This function will be called whenever {type:FETCH_ITEMS} is dispatched.
-    // `getState` is provided here for convenience, to access the current store state.
+    // `getState` is provided here for convenience, to access the current taverne state.
 
     const items = await apiCall(parameters);
     return items;
@@ -87,7 +87,7 @@ export {FETCH_ITEMS};
 
 ## 🐿️ setup the \<Taverne> provider
 
-Once all reducers are ready, instanciate and pass `{dispatch, store}` to the `<Taverne>` provider.
+Once all barrels are ready, instanciate and pass `{dispatch, taverne}` to the `<Taverne>` provider.
 
 🔍 Example:
 
@@ -97,16 +97,16 @@ import React from 'react';
 import {render} from 'react-dom';
 import {Taverne} from 'taverne/hooks';
 
-import items from './features/items/reducer.js';
-import anyOtherStuff from './features/whatever/reducer.js';
+import items from './barrels/items.barrel.js';
+import anyOtherStuff from './barrels/whatever.barrel.js';
 
-const {dispatch, store} = createLaTaverne({
+const {dispatch, taverne} = createLaTaverne({
   items,
   anyOtherStuff
 });
 
 render(
-  <Taverne dispatch={dispatch} store={store}>
+  <Taverne dispatch={dispatch} taverne={taverne}>
     <App />
   </Taverne>,
   container
@@ -142,7 +142,7 @@ To listen to specific changes in the global state, and update your local props o
 Use [`prop drilling`](https://kentcdodds.com/blog/prop-drilling) from your containers to your components: pass functions dispatching the actions
 
 ```js
-import {SELECT_ITEM} from './features/items/reducer.js';
+import {SELECT_ITEM} from './barrels/items.barrel.js';
 
 const ItemsContainer = props => {
   const {dispatch} = useTaverne();
@@ -171,15 +171,15 @@ To do so, specify the `props` mapping you want to listen for changes, telling co
 ```js
 const Container = () => {
   const {pour} = useTaverne();
-  const foo = pour('path.to.anything.within.your.store');
+  const foo = pour('path.to.anything.within.your.taverne');
 
   return <Component foo={foo} />;
 };
 ```
 
-This way, on every store update, specific props will be extracted for the components.
+This way, on every taverne update, specific props will be extracted for the components.
 
-If those props don't change, the store won't notify your container, preventing a re-rendering: this will allow accurate local rendering from a global app state.
+If those props don't change, the taverne won't notify your container, preventing a re-rendering: this will allow accurate local rendering from a global app state.
 
 ### more pouring facilities
 
