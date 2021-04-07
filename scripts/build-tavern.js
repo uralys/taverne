@@ -1,5 +1,3 @@
-const fs = require('fs');
-const path = require('path');
 const pkg = require('../package.json');
 const chalk = require('chalk');
 const esbuild = require('esbuild');
@@ -33,7 +31,7 @@ const buildTavern = (format, minify) => {
       banner: {js: banner},
       format,
       minify,
-      entryPoints: ['src/stores/create-tavern.js'],
+      entryPoints: ['src/taverne/index.js'],
       bundle: true,
       sourcemap: true,
       metafile: true,
