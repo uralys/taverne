@@ -52,11 +52,11 @@ const createReducing = (nestedPath, getState, setState) =>
 
 // -----------------------------------------------------------------------------
 
-const createStore = reducers => {
-  const initialState = Object.keys(reducers).reduce(
+const createTaverne = barrels => {
+  const initialState = Object.keys(barrels).reduce(
     (acc, key) => ({
       ...acc,
-      [key]: reducers[key].initialState
+      [key]: barrels[key].initialState
     }),
     {}
   );
@@ -85,14 +85,14 @@ const createStore = reducers => {
 
   // -------------------------------------------------
 
-  const store = {
+  const taverne = {
     initialState,
     getState,
     setState,
     onDispatch: (action, dispatch, getState) => {
-      Object.keys(reducers).forEach(key => {
+      Object.keys(barrels).forEach(key => {
         const applyReducing = createReducing(key, getState, setState);
-        const {reactions} = reducers[key];
+        const {reactions} = barrels[key];
         processReactions(action, reactions, applyReducing, dispatch, getState);
       });
     },
@@ -108,9 +108,9 @@ const createStore = reducers => {
     })
   };
 
-  return store;
+  return taverne;
 };
 
 // -----------------------------------------------------------------------------
 
-export default createStore;
+export default createTaverne;

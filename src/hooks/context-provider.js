@@ -23,8 +23,8 @@ const useTaverne = () => {
 
 // -----------------------------------------------------------------------------
 
-const Taverne = ({dispatch, store, children}) => {
-  const pour = createPourHook(store);
+const Taverne = ({dispatch, taverne, children}) => {
+  const pour = createPourHook(taverne);
 
   return (
     <Context.Provider value={{dispatch, pour}}>{children}</Context.Provider>

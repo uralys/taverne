@@ -1,12 +1,12 @@
 // -----------------------------------------------------------------------------
 
 import test from 'ava';
-import createLaTaverne from '../../../src/stores/create-tavern';
+import createLaTaverne from '../../../src/taverne';
 
 // -----------------------------------------------------------------------------
 
 test('reduce new state on dispatch', t => {
-  const {store, dispatch} = createLaTaverne({
+  const {taverne, dispatch} = createLaTaverne({
     counter: {
       initialState: {count: 0},
       reactions: [
@@ -25,7 +25,7 @@ test('reduce new state on dispatch', t => {
   dispatch({type: 'add', payload: {value: 12}});
   dispatch({type: 'add', payload: {value: 12}});
 
-  t.deepEqual(store.getState(), {
+  t.deepEqual(taverne.getState(), {
     counter: {count: 36}
   });
 });

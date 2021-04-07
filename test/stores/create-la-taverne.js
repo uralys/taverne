@@ -1,32 +1,32 @@
 // -----------------------------------------------------------------------------
 
 import test from 'ava';
-import createLaTaverne from '../../src/stores/create-tavern';
+import createLaTaverne from '../../src/taverne';
 
 // -----------------------------------------------------------------------------
 
 test('simple definition', t => {
-  const {store, dispatch} = createLaTaverne({});
+  const {taverne, dispatch} = createLaTaverne({});
 
-  t.deepEqual(store.initialState, {});
+  t.deepEqual(taverne.initialState, {});
   t.is(typeof dispatch, 'function');
-  t.is(typeof store.getState, 'function');
-  t.is(typeof store.setState, 'function');
-  t.is(typeof store.onDispatch, 'function');
-  t.is(typeof store.subscribe, 'function');
-  t.is(typeof store.unsubscribe, 'function');
+  t.is(typeof taverne.getState, 'function');
+  t.is(typeof taverne.setState, 'function');
+  t.is(typeof taverne.onDispatch, 'function');
+  t.is(typeof taverne.subscribe, 'function');
+  t.is(typeof taverne.unsubscribe, 'function');
 });
 
 // -----------------------------------------------------------------------------
 
-test('split store from reducers names', t => {
-  const {store} = createLaTaverne({
+test('split taverne from reducers names', t => {
+  const {taverne} = createLaTaverne({
     plop: {},
     plip: {},
     plup: {}
   });
 
-  t.deepEqual(store.initialState, {
+  t.deepEqual(taverne.initialState, {
     plop: undefined,
     plip: undefined,
     plup: undefined
@@ -36,13 +36,13 @@ test('split store from reducers names', t => {
 // -----------------------------------------------------------------------------
 
 test('apply initial states', t => {
-  const {store} = createLaTaverne({
+  const {taverne} = createLaTaverne({
     plop: {initialState: 'ploop'},
     plip: {initialState: 'pliip'},
     plup: {initialState: 'pluup'}
   });
 
-  t.deepEqual(store.initialState, {
+  t.deepEqual(taverne.initialState, {
     plop: 'ploop',
     plip: 'pliip',
     plup: 'pluup'

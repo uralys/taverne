@@ -2,7 +2,7 @@
 
 import deepEqual from 'deep-equal';
 import {useEffect, useLayoutEffect, useState} from 'react';
-import connectStore from '../stores/connect-store';
+import connectTaverne from '../taverne/connect-taverne';
 import get from '../lib/get';
 
 // -----------------------------------------------------------------------------
@@ -58,7 +58,7 @@ const createUpdater = (setProps, propsMapping = null) => {
 
 // -----------------------------------------------------------------------------
 
-const createPourHook = store =>
+const createPourHook = taverne =>
   function pour(propsMapping = null, _default) {
     const defaultProps =
       _default || (typeof propsMapping === 'string' ? undefined : {});
@@ -67,7 +67,7 @@ const createPourHook = store =>
     const onUpdate = createUpdater(setProps, propsMapping);
 
     useIsoLayoutEffect(() => {
-      const disconnect = connectStore(store, onUpdate);
+      const disconnect = connectTaverne(taverne, onUpdate);
       return disconnect;
     }, []);
 

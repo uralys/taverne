@@ -1,19 +1,19 @@
 // -----------------------------------------------------------------------------
 
-import createStore from './create-store';
+import createTaverne from './create-taverne';
 
 // -----------------------------------------------------------------------------
 
-const createDispatch = (store, middlewares) => {
+const createDispatch = (taverne, middlewares) => {
   const dispatch = action => {
     if (!action.type) {
       throw new Error(`❌ [La Taverne] dispatch: action.type is required`);
     }
 
-    store.onDispatch(action, dispatch, store.getState);
+    taverne.onDispatch(action, dispatch, taverne.getState);
 
     middlewares.forEach(middleware => {
-      middleware.onDispatch(action, dispatch, store.getState);
+      middleware.onDispatch(action, dispatch, taverne.getState);
     });
   };
 
@@ -22,15 +22,15 @@ const createDispatch = (store, middlewares) => {
 
 // -----------------------------------------------------------------------------
 
-const createLaTaverne = (reducers, middlewares = []) => {
-  const store = createStore(reducers);
-  const dispatch = createDispatch(store, middlewares);
+const createLaTaverne = (barrels, middlewares = []) => {
+  const taverne = createTaverne(barrels);
+  const dispatch = createDispatch(taverne, middlewares);
 
   middlewares.forEach(middleware => {
-    middleware.onCreate(dispatch, store);
+    middleware.onCreate(dispatch, taverne);
   });
 
-  return {dispatch, store};
+  return {dispatch, taverne};
 };
 
 // -----------------------------------------------------------------------------

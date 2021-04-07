@@ -3,19 +3,19 @@
 import test from 'ava';
 import {renderHook} from '@testing-library/react-hooks';
 
-import createLaTaverne from '../../src/stores/create-tavern';
+import createLaTaverne from '../../src/taverne';
 import createPourHook from '../../src/hooks/create-pour-hook';
 
 // -----------------------------------------------------------------------------
 
 test('pour("field")', t => {
-  const {store} = createLaTaverne({
+  const {taverne} = createLaTaverne({
     bar: {
       initialState: 'ale'
     }
   });
 
-  const pour = createPourHook(store);
+  const pour = createPourHook(taverne);
   const {result} = renderHook(() => pour('bar'));
 
   t.is(result.current, 'ale');
@@ -24,13 +24,13 @@ test('pour("field")', t => {
 // -----------------------------------------------------------------------------
 
 test('pour("nested.path.in.state")', t => {
-  const {store} = createLaTaverne({
+  const {taverne} = createLaTaverne({
     bar: {
       initialState: {ale: {brown: {fresh: 'plenty'}}}
     }
   });
 
-  const pour = createPourHook(store);
+  const pour = createPourHook(taverne);
   const {result} = renderHook(() => pour('bar.ale.brown.fresh'));
 
   t.is(result.current, 'plenty');
@@ -39,7 +39,7 @@ test('pour("nested.path.in.state")', t => {
 // -----------------------------------------------------------------------------
 
 test('pour({fields})', t => {
-  const {store} = createLaTaverne({
+  const {taverne} = createLaTaverne({
     bar: {
       initialState: {
         ale: 'plenty',
@@ -54,7 +54,7 @@ test('pour({fields})', t => {
     }
   });
 
-  const pour = createPourHook(store);
+  const pour = createPourHook(taverne);
   const {result} = renderHook(() =>
     pour({
       mug: 'bar.milk',
@@ -71,7 +71,7 @@ test('pour({fields})', t => {
 // -----------------------------------------------------------------------------
 
 test('pour(state => {fields})', t => {
-  const {store} = createLaTaverne({
+  const {taverne} = createLaTaverne({
     navigation: {
       initialState: {
         selectedBook: 2
@@ -88,7 +88,7 @@ test('pour(state => {fields})', t => {
     }
   });
 
-  const pour = createPourHook(store);
+  const pour = createPourHook(taverne);
   const {result} = renderHook(() =>
     pour(state => ({
       title: `shelves.books.${state.navigation.selectedBook}.title`
