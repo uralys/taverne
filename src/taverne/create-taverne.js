@@ -14,20 +14,20 @@ const processReactions = (
 ) => {
   const {type, payload} = action;
 
-  reactions.forEach(({on, perform, reduce}) => {
+  reactions.forEach(({on, perform, reduce, after}) => {
     if (on === type) {
       if (typeof perform === 'function') {
         const result = perform(payload, dispatch, getState);
         if (result && result.then) {
           result.then(asyncResult => {
-            applyReducing(reduce, asyncResult);
+            applyReducing(reduce, asyncResult, after);
             dispatch({type: `${type}/success`, payload: asyncResult});
           });
         } else {
-          applyReducing(reduce, result);
+          applyReducing(reduce, result, after);
         }
       } else {
-        applyReducing(reduce, payload);
+        applyReducing(reduce, payload, after);
       }
     }
   });
@@ -35,8 +35,8 @@ const processReactions = (
 
 // -----------------------------------------------------------------------------
 
-const createReducing = (nestedPath, getState, setState) =>
-  function applyReducing(reduce, payload) {
+const createReducing = (nestedPath, dispatch, getState, setState) =>
+  function applyReducing(reduce, payload, after) {
     if (!reduce) {
       return;
     }
@@ -48,6 +48,10 @@ const createReducing = (nestedPath, getState, setState) =>
     );
 
     setState(newNestedState, nestedPath);
+
+    if (typeof after === 'function') {
+      after(payload, dispatch, getState);
+    }
   };
 
 // -----------------------------------------------------------------------------
@@ -91,7 +95,7 @@ const createTaverne = barrels => {
     setState,
     onDispatch: (action, dispatch, getState) => {
       Object.keys(barrels).forEach(key => {
-        const applyReducing = createReducing(key, getState, setState);
+        const applyReducing = createReducing(key, dispatch, getState, setState);
         const {reactions} = barrels[key];
         processReactions(action, reactions, applyReducing, dispatch, getState);
       });
