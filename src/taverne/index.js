@@ -19,17 +19,24 @@ const createMiddlewares = (taverne, middlewaresCreators) => {
 // -----------------------------------------------------------------------------
 
 const createDispatch = (taverne, middlewares) => {
+  const applyMiddlewares = action => () => {
+    middlewares.forEach(middleware => {
+      middleware.onDispatch &&
+        middleware.onDispatch(action, dispatch, taverne.getState);
+    });
+  };
+
   const dispatch = action => {
     if (!action.type) {
       throw new Error(`❌ [La Taverne] dispatch: action.type is required`);
     }
 
-    taverne.onDispatch(action, dispatch, taverne.getState);
-
-    middlewares.forEach(middleware => {
-      middleware.onDispatch &&
-        middleware.onDispatch(action, dispatch, taverne.getState);
-    });
+    taverne.onDispatch(
+      action,
+      dispatch,
+      taverne.getState,
+      applyMiddlewares(action)
+    );
   };
 
   return dispatch;

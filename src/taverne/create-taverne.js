@@ -5,12 +5,31 @@ import get from '../lib/get';
 
 // -----------------------------------------------------------------------------
 
+const resolve = (
+  reduce,
+  dataToReduce,
+  applyReducing,
+  applyMiddlewares,
+  dispatch,
+  getState,
+  after
+) => {
+  applyReducing(reduce, dataToReduce);
+  applyMiddlewares();
+
+  if (typeof after === 'function') {
+    after(dataToReduce, dispatch, getState);
+  }
+};
+// -----------------------------------------------------------------------------
+
 const processReactions = (
   action,
   reactions,
   applyReducing,
   dispatch,
-  getState
+  getState,
+  applyMiddlewares
 ) => {
   const {type, payload} = action;
 
@@ -20,14 +39,39 @@ const processReactions = (
         const result = perform(payload, dispatch, getState);
         if (result && result.then) {
           result.then(asyncResult => {
-            applyReducing(reduce, asyncResult, after);
+            resolve(
+              reduce,
+              asyncResult,
+              applyReducing,
+              applyMiddlewares,
+              dispatch,
+              getState,
+              after
+            );
+
             dispatch({type: `${type}/success`, payload: asyncResult});
           });
         } else {
-          applyReducing(reduce, result, after);
+          resolve(
+            reduce,
+            result,
+            applyReducing,
+            applyMiddlewares,
+            dispatch,
+            getState,
+            after
+          );
         }
       } else {
-        applyReducing(reduce, payload, after);
+        resolve(
+          reduce,
+          payload,
+          applyReducing,
+          applyMiddlewares,
+          dispatch,
+          getState,
+          after
+        );
       }
     }
   });
@@ -36,7 +80,7 @@ const processReactions = (
 // -----------------------------------------------------------------------------
 
 const createReducing = (nestedPath, dispatch, getState, setState) =>
-  function applyReducing(reduce, payload, after) {
+  function applyReducing(reduce, payload) {
     if (!reduce) {
       return;
     }
@@ -48,10 +92,6 @@ const createReducing = (nestedPath, dispatch, getState, setState) =>
     );
 
     setState(newNestedState, nestedPath);
-
-    if (typeof after === 'function') {
-      after(payload, dispatch, getState);
-    }
   };
 
 // -----------------------------------------------------------------------------
@@ -93,11 +133,18 @@ const createTaverne = barrels => {
     initialState,
     getState,
     setState,
-    onDispatch: (action, dispatch, getState) => {
+    onDispatch: (action, dispatch, getState, applyMiddlewares) => {
       Object.keys(barrels).forEach(key => {
         const applyReducing = createReducing(key, dispatch, getState, setState);
         const {reactions} = barrels[key];
-        processReactions(action, reactions, applyReducing, dispatch, getState);
+        processReactions(
+          action,
+          reactions,
+          applyReducing,
+          dispatch,
+          getState,
+          applyMiddlewares
+        );
       });
     },
     subscribe: subscription => {
