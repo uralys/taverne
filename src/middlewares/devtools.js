@@ -1,11 +1,10 @@
 // -----------------------------------------------------------------------------
 
 const logPrefix = '[La Taverne 🐛]';
-let devtools;
 
 // -----------------------------------------------------------------------------
 
-const onCreate = (dispatch, store) => {
+const onCreate = taverne => {
   const extension = window && window.__REDUX_DEVTOOLS_EXTENSION__;
 
   if (!extension) {
@@ -18,35 +17,32 @@ const onCreate = (dispatch, store) => {
     return;
   }
 
-  const initialState = store.getState();
-  devtools.instance = extension.connect();
-  devtools.instance.init(initialState);
+  const initialState = taverne.getState();
+  const devtoolsInstance = extension.connect();
+  devtoolsInstance.init(initialState);
 
-  devtools.instance.subscribe(message => {
+  devtoolsInstance.subscribe(message => {
     if (message.type === 'DISPATCH' && message.state) {
-      store.setState(JSON.parse(message.state));
+      taverne.setState(JSON.parse(message.state));
     } else {
       console.log(`${logPrefix} monitor message not handled:`, message);
     }
   });
 
   console.log(`${logPrefix} Plugged Redux devtools`);
+  return devtoolsInstance;
 };
 
 // -----------------------------------------------------------------------------
 
-const onDispatch = (action, dispatch, getState) => {
-  if (!devtools.instance) return;
-  devtools.instance.send(action, getState());
+const onDispatch = (action, dispatch, getState, devtoolsInstance) => {
+  if (!devtoolsInstance) return;
+  devtoolsInstance.send(action, getState());
 };
 
 // -----------------------------------------------------------------------------
 
-devtools = {
+export default {
   onCreate,
   onDispatch
 };
-
-// -----------------------------------------------------------------------------
-
-export default devtools;

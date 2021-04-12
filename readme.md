@@ -141,8 +141,8 @@ You can create more generic middlewares to operate any actions:
 
 ```js
 const customMiddleware = {
-  onCreate: (dispatch, store) => {},
-  onDispatch: (action, dispatch, getState) => {}
+  onCreate: taverne => {},
+  onDispatch: (action, dispatch, getState, middleware) => {}
 };
 ```
 
