@@ -6,6 +6,7 @@ import get from '../lib/get';
 // -----------------------------------------------------------------------------
 
 const resolve = (
+  action,
   reduce,
   dataToReduce,
   applyReducing,
@@ -14,11 +15,30 @@ const resolve = (
   getState,
   after
 ) => {
-  applyReducing(reduce, dataToReduce);
-  applyMiddlewares();
+  try {
+    applyReducing(reduce, dataToReduce);
+  } catch (error) {
+    dispatch({type: `${action.type}/reducing-error`, payload: {error, action}});
+    return;
+  }
+
+  try {
+    applyMiddlewares();
+  } catch (error) {
+    dispatch({
+      type: `${action.type}/middleware-error`,
+      payload: {error, action}
+    });
+    return;
+  }
 
   if (typeof after === 'function') {
-    after(dataToReduce, dispatch, getState);
+    try {
+      after(dataToReduce, dispatch, getState);
+    } catch (error) {
+      dispatch({type: `${action.type}/after-error`, payload: {error, action}});
+      return;
+    }
   }
 };
 // -----------------------------------------------------------------------------
@@ -36,10 +56,18 @@ const processReactions = (
   reactions.forEach(({on, perform, reduce, after}) => {
     if (on === type) {
       if (typeof perform === 'function') {
-        const result = perform(payload, dispatch, getState);
+        let result;
+        try {
+          result = perform(payload, dispatch, getState);
+        } catch (e) {
+          dispatch({type: `${type}/perform-error`, payload: e});
+          return;
+        }
+
         if (result && result.then) {
           result.then(asyncResult => {
             resolve(
+              action,
               reduce,
               asyncResult,
               applyReducing,
@@ -53,6 +81,7 @@ const processReactions = (
           });
         } else {
           resolve(
+            action,
             reduce,
             result,
             applyReducing,
@@ -64,6 +93,7 @@ const processReactions = (
         }
       } else {
         resolve(
+          action,
           reduce,
           payload,
           applyReducing,
