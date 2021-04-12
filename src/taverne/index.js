@@ -8,6 +8,7 @@ const createMiddlewares = (taverne, middlewaresSetup) => {
   const middlewares = middlewaresSetup.reduce((acc, middleware) => {
     const instance = middleware.onCreate(taverne);
     if (instance) {
+      instance.onDispatch = middlewaresSetup.onDispatch;
       acc.push(instance);
     }
     return acc;
@@ -27,7 +28,7 @@ const createDispatch = (taverne, middlewares) => {
     taverne.onDispatch(action, dispatch, taverne.getState);
 
     middlewares.forEach(middleware => {
-      middleware.onDispatch(action, dispatch, taverne.getState, middleware);
+      middleware.onDispatch(action, dispatch, taverne.getState);
     });
   };
 

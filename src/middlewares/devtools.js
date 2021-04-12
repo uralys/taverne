@@ -35,9 +35,8 @@ const onCreate = taverne => {
 
 // -----------------------------------------------------------------------------
 
-const onDispatch = (action, dispatch, getState, devtoolsInstance) => {
-  if (!devtoolsInstance) return;
-  devtoolsInstance.send(action, getState());
+const onDispatch = (action, dispatch, getState) => {
+  this.send(action, getState());
 };
 
 // -----------------------------------------------------------------------------
