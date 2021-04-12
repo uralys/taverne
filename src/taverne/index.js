@@ -4,11 +4,10 @@ import createTaverne from './create-taverne';
 
 // -----------------------------------------------------------------------------
 
-const createMiddlewares = (taverne, middlewaresSetup) => {
-  const middlewares = middlewaresSetup.reduce((acc, middleware) => {
-    const instance = middleware.onCreate(taverne);
+const createMiddlewares = (taverne, middlewaresCreators) => {
+  const middlewares = middlewaresCreators.reduce((acc, createMiddleware) => {
+    const instance = createMiddleware(taverne);
     if (instance) {
-      instance.onDispatch = middlewaresSetup.onDispatch;
       acc.push(instance);
     }
     return acc;
@@ -28,7 +27,8 @@ const createDispatch = (taverne, middlewares) => {
     taverne.onDispatch(action, dispatch, taverne.getState);
 
     middlewares.forEach(middleware => {
-      middleware.onDispatch(action, dispatch, taverne.getState);
+      middleware.onDispatch &&
+        middleware.onDispatch(action, dispatch, taverne.getState);
     });
   };
 
@@ -37,9 +37,9 @@ const createDispatch = (taverne, middlewares) => {
 
 // -----------------------------------------------------------------------------
 
-const createLaTaverne = (barrels, middlewaresSetup = []) => {
+const createLaTaverne = (barrels, middlewaresCreators = []) => {
   const taverne = createTaverne(barrels);
-  const middlewares = createMiddlewares(taverne, middlewaresSetup);
+  const middlewares = createMiddlewares(taverne, middlewaresCreators);
   const dispatch = createDispatch(taverne, middlewares);
 
   return {dispatch, taverne};

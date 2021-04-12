@@ -137,12 +137,17 @@ You can "pour" specific parts of the "taverne", to allow [accurate local renderi
 
 ## 🔆 Middlewares
 
-You can create more generic middlewares to operate any actions:
+You can create more generic middlewares to operate any actions.
+
+Your middlewares must implement `onDispatch: (action, dispatch, getState) => {}`
 
 ```js
-const customMiddleware = {
-  onCreate: taverne => {},
-  onDispatch: (action, dispatch, getState) => {}
+const customMiddleware = taverne => {
+  const instance = {
+    onDispatch: (action, dispatch, getState) => {}
+  };
+
+  return instance;
 };
 ```
 

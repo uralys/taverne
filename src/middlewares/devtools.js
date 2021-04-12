@@ -4,7 +4,7 @@ const logPrefix = '[La Taverne 🐛]';
 
 // -----------------------------------------------------------------------------
 
-const onCreate = taverne => {
+const createDevtools = taverne => {
   const extension = window && window.__REDUX_DEVTOOLS_EXTENSION__;
 
   if (!extension) {
@@ -29,19 +29,14 @@ const onCreate = taverne => {
     }
   });
 
+  devtoolsInstance.onDispatch = (action, dispatch, getState) => {
+    devtoolsInstance.send(action, getState());
+  };
+
   console.log(`${logPrefix} Plugged Redux devtools`);
   return devtoolsInstance;
 };
 
 // -----------------------------------------------------------------------------
 
-const onDispatch = (action, dispatch, getState) => {
-  this.send(action, getState());
-};
-
-// -----------------------------------------------------------------------------
-
-export default {
-  onCreate,
-  onDispatch
-};
+export default createDevtools;
