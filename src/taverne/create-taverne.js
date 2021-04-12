@@ -10,7 +10,6 @@ const resolve = (
   reduce,
   dataToReduce,
   applyReducing,
-  applyMiddlewares,
   dispatch,
   getState,
   after
@@ -19,16 +18,6 @@ const resolve = (
     applyReducing(reduce, dataToReduce);
   } catch (error) {
     dispatch({type: `${action.type}/reducing-error`, payload: {error, action}});
-    return;
-  }
-
-  try {
-    applyMiddlewares();
-  } catch (error) {
-    dispatch({
-      type: `${action.type}/middleware-error`,
-      payload: {error, action}
-    });
     return;
   }
 
@@ -48,8 +37,7 @@ const processReactions = (
   reactions,
   applyReducing,
   dispatch,
-  getState,
-  applyMiddlewares
+  getState
 ) => {
   const {type, payload} = action;
 
@@ -71,7 +59,6 @@ const processReactions = (
               reduce,
               asyncResult,
               applyReducing,
-              applyMiddlewares,
               dispatch,
               getState,
               after
@@ -85,7 +72,6 @@ const processReactions = (
             reduce,
             result,
             applyReducing,
-            applyMiddlewares,
             dispatch,
             getState,
             after
@@ -97,7 +83,6 @@ const processReactions = (
           reduce,
           payload,
           applyReducing,
-          applyMiddlewares,
           dispatch,
           getState,
           after
@@ -163,18 +148,11 @@ const createTaverne = barrels => {
     initialState,
     getState,
     setState,
-    onDispatch: (action, dispatch, getState, applyMiddlewares) => {
+    onDispatch: (action, dispatch, getState) => {
       Object.keys(barrels).forEach(key => {
         const applyReducing = createReducing(key, dispatch, getState, setState);
         const {reactions} = barrels[key];
-        processReactions(
-          action,
-          reactions,
-          applyReducing,
-          dispatch,
-          getState,
-          applyMiddlewares
-        );
+        processReactions(action, reactions, applyReducing, dispatch, getState);
       });
     },
     subscribe: subscription => {
