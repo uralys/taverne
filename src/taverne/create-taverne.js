@@ -17,7 +17,11 @@ const resolve = (
   try {
     applyReducing(reduce, dataToReduce);
   } catch (error) {
-    dispatch({type: `${action.type}/reducing-error`, payload: {error, action}});
+    console.error(error);
+    dispatch({
+      type: `${action.type}/reducing-error`,
+      payload: {error: error.message, action}
+    });
     return;
   }
 
@@ -25,7 +29,11 @@ const resolve = (
     try {
       after(dataToReduce, dispatch, getState);
     } catch (error) {
-      dispatch({type: `${action.type}/after-error`, payload: {error, action}});
+      console.error(error);
+      dispatch({
+        type: `${action.type}/after-error`,
+        payload: {error: error.message, action}
+      });
       return;
     }
   }
@@ -47,8 +55,12 @@ const processReactions = (
         let result;
         try {
           result = perform(payload, dispatch, getState);
-        } catch (e) {
-          dispatch({type: `${type}/perform-error`, payload: e});
+        } catch (error) {
+          console.error(error);
+          dispatch({
+            type: `${type}/perform-error`,
+            payload: {error: error.message, action}
+          });
           return;
         }
 
