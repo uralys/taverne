@@ -33,13 +33,16 @@ const createDispatch = (taverne, middlewares) => {
 
     let middlewaresApplied = false;
 
-    const _dispatch = action => {
+    const nextDispatch = nextAction => {
       applyMiddlewares();
       middlewaresApplied = true;
-      dispatch(action);
+      dispatch({
+        ...nextAction,
+        from: action.type
+      });
     };
 
-    taverne.onDispatch(action, _dispatch, taverne.getState);
+    taverne.onDispatch(action, nextDispatch, taverne.getState);
 
     if (!middlewaresApplied) {
       applyMiddlewares();
