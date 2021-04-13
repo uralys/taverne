@@ -141,9 +141,6 @@ const createTaverne = barrels => {
   // subscriptions will be notified every time the state has changed
   const subscriptions = [];
 
-  // listeners will be notified onDispatch
-  const listeners = [];
-
   // -------------------------------------------------
 
   const getState = () => state;
@@ -178,9 +175,6 @@ const createTaverne = barrels => {
     getState,
     setState,
     onDispatch: (action, dispatch, getState) => {
-      listeners.forEach(listen => listen && listen(action));
-      console.log('--> nb listeners', listeners.length);
-
       Object.keys(barrels).forEach(key => {
         const {reactions} = barrels[key];
         processReactions(
@@ -198,15 +192,8 @@ const createTaverne = barrels => {
     unsubscribe: subscription => {
       subscriptions.splice(subscriptions.indexOf(subscription), 1);
     },
-    listen: listener => {
-      listeners.push(listener);
-    },
-    stopListening: listener => {
-      listeners.splice(listeners.indexOf(listener), 1);
-    },
     debug: () => ({
       state,
-      listeners,
       subscriptions
     })
   };

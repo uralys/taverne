@@ -7,7 +7,13 @@ import createTaverne from './create-taverne';
 const createMiddlewares = (taverne, middlewaresCreators) => {
   const middlewares = middlewaresCreators.reduce((acc, createMiddleware) => {
     const instance = createMiddleware(taverne);
+
     if (instance) {
+      instance.detach = () => {
+        console.log('detach!');
+        middlewares.splice(middlewares.indexOf(instance), 1);
+      };
+
       acc.push(instance);
     }
     return acc;
@@ -25,6 +31,7 @@ const createDispatch = (taverne, middlewares) => {
     }
 
     const applyMiddlewares = () => {
+      console.log('nb middlewares', middlewares.length);
       middlewares.forEach(middleware => {
         middleware.onDispatch &&
           middleware.onDispatch(action, dispatch, taverne.getState);
