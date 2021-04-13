@@ -65,6 +65,8 @@ const processReactions = (
         }
 
         if (result && result.then) {
+          dispatch({type: `${type}/processing`});
+
           result.then(asyncResult => {
             resolve(
               action,
