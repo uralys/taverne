@@ -1,7 +1,7 @@
 {
   "name": "taverne",
   "version": "1.23.7",
-  "description": "Elementary Flux implementation for your state management in React",
+  "description": "Elementary Flux implementation for your React state management",
   "repository": "https://github.com/uralys/taverne",
   "license": "MIT",
   "keywords": [
@@ -36,7 +36,7 @@
     "ava": "^3.15.0",
     "babel-eslint": "^10.0.3",
     "chalk": "^4.1.0",
-    "esbuild": "^0.11.8",
+    "esbuild": "^0.11.10",
     "eslint": "^7.24.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-config-standard": "^16.0.2",
