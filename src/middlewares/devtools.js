@@ -30,6 +30,10 @@ const createDevtools = taverne => {
   });
 
   devtoolsInstance.onDispatch = (action, dispatch, getState) => {
+    if (action.from) {
+      action.type = `└── ${action.type}`;
+    }
+
     devtoolsInstance.send(action, getState());
   };
 
