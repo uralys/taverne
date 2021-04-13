@@ -179,7 +179,7 @@ const createTaverne = barrels => {
     setState,
     onDispatch: (action, dispatch, getState) => {
       listeners.forEach(listen => listen && listen(action));
-      console.log('--> nb listeners', listeners);
+      console.log('--> nb listeners', listeners.length);
 
       Object.keys(barrels).forEach(key => {
         const {reactions} = barrels[key];
