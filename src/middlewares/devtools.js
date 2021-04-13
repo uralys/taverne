@@ -43,7 +43,7 @@ const createDevtools = taverne => {
     let type = action.type;
 
     const nesting = getNesting(action.from);
-    type = `${nesting}${action.from ? '└──' : ''} ${type}`;
+    type = `${action.from ? `└──${nesting}` : ''} ${type}`;
 
     devtoolsInstance.send(
       {
