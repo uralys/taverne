@@ -10,7 +10,6 @@ const createMiddlewares = (taverne, middlewaresCreators) => {
 
     if (instance) {
       instance.detach = () => {
-        console.log('detach!');
         middlewares.splice(middlewares.indexOf(instance), 1);
       };
 
@@ -45,7 +44,7 @@ const createDispatch = (taverne, middlewares) => {
       middlewaresApplied = true;
       dispatch({
         ...nextAction,
-        from: action.type
+        from: action
       });
     };
 

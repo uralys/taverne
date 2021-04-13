@@ -4,6 +4,16 @@ const logPrefix = '[La Taverne 🐛]';
 
 // -----------------------------------------------------------------------------
 
+const getNesting = (action = {}) => {
+  if (!action.from) {
+    return '';
+  }
+
+  return '  ' + getNesting(action.from);
+};
+
+// -----------------------------------------------------------------------------
+
 const createDevtools = taverne => {
   const extension = window && window.__REDUX_DEVTOOLS_EXTENSION__;
 
@@ -32,9 +42,8 @@ const createDevtools = taverne => {
   devtoolsInstance.onDispatch = (action, dispatch, getState) => {
     let type = action.type;
 
-    if (action.from) {
-      type = `└── ${type}`;
-    }
+    const nesting = getNesting(action.from);
+    type = `${nesting}${action.from ? '└──' : ''} ${type}`;
 
     devtoolsInstance.send(
       {
