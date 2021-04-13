@@ -9,7 +9,7 @@ const getNesting = (action = {}) => {
     return '';
   }
 
-  return '  ' + getNesting(action.from);
+  return '--' + getNesting(action.from);
 };
 
 // -----------------------------------------------------------------------------
@@ -43,9 +43,7 @@ const createDevtools = taverne => {
     let type = action.type;
 
     const nesting = getNesting(action.from);
-    type = `${nesting.length > 0 ? `|${nesting}` : ''}${
-      action.from ? '└──' : ''
-    } ${type}`;
+    type = `${nesting}${action.from ? '└──' : ''} ${type}`;
 
     devtoolsInstance.send(
       {
