@@ -30,11 +30,19 @@ const createDevtools = taverne => {
   });
 
   devtoolsInstance.onDispatch = (action, dispatch, getState) => {
+    let type = action.type;
+
     if (action.from) {
-      action.type = `└── ${action.type}`;
+      type = `└── ${type}`;
     }
 
-    devtoolsInstance.send(action, getState());
+    devtoolsInstance.send(
+      {
+        ...action,
+        type
+      },
+      getState()
+    );
   };
 
   console.log(`${logPrefix} Plugged Redux devtools`);

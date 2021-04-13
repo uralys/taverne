@@ -108,7 +108,7 @@ const processReactions = (
 
 // -----------------------------------------------------------------------------
 
-const createReducing = (nestedPath, dispatch, getState, setState) =>
+const createReducing = (nestedPath, getState, setState) =>
   function applyReducing(reduce, payload) {
     if (!reduce) {
       return;
@@ -158,15 +158,30 @@ const createTaverne = barrels => {
 
   // -------------------------------------------------
 
+  const barrelsReducing = Object.keys(barrels).reduce(
+    (acc, key) => ({
+      ...acc,
+      [key]: createReducing(key, getState, setState)
+    }),
+    {}
+  );
+
+  // -------------------------------------------------
+
   const taverne = {
     initialState,
     getState,
     setState,
     onDispatch: (action, dispatch, getState) => {
       Object.keys(barrels).forEach(key => {
-        const applyReducing = createReducing(key, dispatch, getState, setState);
         const {reactions} = barrels[key];
-        processReactions(action, reactions, applyReducing, dispatch, getState);
+        processReactions(
+          action,
+          reactions,
+          barrelsReducing[key],
+          dispatch,
+          getState
+        );
       });
     },
     subscribe: subscription => {
