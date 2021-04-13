@@ -30,7 +30,6 @@ const createDispatch = (taverne, middlewares) => {
     }
 
     const applyMiddlewares = () => {
-      console.log('nb middlewares', middlewares.length);
       middlewares.forEach(middleware => {
         middleware.onDispatch &&
           middleware.onDispatch(action, dispatch, taverne.getState);

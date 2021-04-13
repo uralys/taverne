@@ -9,7 +9,7 @@ const getNesting = (action = {}) => {
     return '';
   }
 
-  return '--' + getNesting(action.from);
+  return '──' + getNesting(action.from);
 };
 
 // -----------------------------------------------------------------------------
