@@ -28,7 +28,7 @@ const createDevtools = taverne => {
   }
 
   const initialState = taverne.getState();
-  const devtoolsInstance = extension.connect();
+  const devtoolsInstance = extension.connect({maxAge: 100});
   devtoolsInstance.init(initialState);
 
   devtoolsInstance.subscribe(message => {
@@ -41,6 +41,7 @@ const createDevtools = taverne => {
 
   devtoolsInstance.onDispatch = (action, dispatch, getState) => {
     let type = action.type;
+    const {bypassDevtoolsState} = action.meta || {};
 
     const nesting = getNesting(action.from);
     type = `${action.from ? `└──${nesting}` : ''} ${type}`;
@@ -50,7 +51,7 @@ const createDevtools = taverne => {
         ...action,
         type
       },
-      getState()
+      bypassDevtoolsState ? 'bypassed for performance' : getState()
     );
   };
 
