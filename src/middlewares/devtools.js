@@ -14,6 +14,25 @@ const getNesting = (action = {}) => {
 
 // -----------------------------------------------------------------------------
 
+function createOnDispatch(devtoolsInstance) {
+  return function (action, dispatch, getState) {
+    let type = action.type;
+
+    const nesting = getNesting(action.from);
+    type = `${action.from ? `└──${nesting}` : ''} ${type}`;
+
+    devtoolsInstance.send(
+      {
+        ...action,
+        type
+      },
+      getState()
+    );
+  };
+}
+
+// -----------------------------------------------------------------------------
+
 const createDevtools = taverne => {
   const extension = window && window.__REDUX_DEVTOOLS_EXTENSION__;
 
@@ -29,6 +48,11 @@ const createDevtools = taverne => {
 
   const initialState = taverne.getState();
   const devtoolsInstance = extension.connect({maxAge: 100});
+  devtoolsInstance.timeout = 0;
+  devtoolsInstance.previousActionType = '';
+
+  const onDispatch = createOnDispatch(devtoolsInstance);
+
   devtoolsInstance.init(initialState);
 
   devtoolsInstance.subscribe(message => {
@@ -40,19 +64,29 @@ const createDevtools = taverne => {
   });
 
   devtoolsInstance.onDispatch = (action, dispatch, getState) => {
-    let type = action.type;
-    const {bypassDevtoolsState} = action.meta || {};
+    if (devtoolsInstance.previousActionType === action.type) {
+      clearTimeout(devtoolsInstance.timeout);
+      devtoolsInstance.debounceCount++;
+      onDispatch(action, dispatch, getState);
+    } else {
+      devtoolsInstance.debounceCount = 0;
+    }
 
-    const nesting = getNesting(action.from);
-    type = `${action.from ? `└──${nesting}` : ''} ${type}`;
-
-    devtoolsInstance.send(
-      {
-        ...action,
-        type
-      },
-      bypassDevtoolsState ? 'bypassed for performance' : getState()
-    );
+    devtoolsInstance.previousActionType = action.type;
+    devtoolsInstance.timeout = setTimeout(() => {
+      if (devtoolsInstance.debounceCount > 0) {
+        onDispatch(
+          {
+            type: `${action.type}/debounced (${devtoolsInstance.debounceCount})`,
+            from: action.from
+          },
+          dispatch,
+          () => {}
+        );
+      }
+      onDispatch(action, dispatch, getState);
+      devtoolsInstance.debounceCount = 0;
+    }, 250);
   };
 
   console.log(`${logPrefix} Plugged Redux devtools`);
