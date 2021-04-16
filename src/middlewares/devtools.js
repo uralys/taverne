@@ -4,6 +4,16 @@ const logPrefix = '[La Taverne 🐛]';
 
 // -----------------------------------------------------------------------------
 
+const isDebounced = (action = {}) => {
+  if (!action.from) {
+    return action.devtools && action.devtools.debounce;
+  }
+
+  return isDebounced(action.from);
+};
+
+// -----------------------------------------------------------------------------
+
 const getNesting = (action = {}) => {
   if (!action.from) {
     return '';
@@ -14,22 +24,48 @@ const getNesting = (action = {}) => {
 
 // -----------------------------------------------------------------------------
 
-function createOnDispatch(devtoolsInstance) {
-  return function (action, dispatch, getState) {
-    let type = action.type;
+const orderParentActions = (action = {}) => {
+  if (!action.from) {
+    return [action];
+  }
 
-    const nesting = getNesting(action.from);
-    type = `${action.from ? `└──${nesting}` : ''} ${type}`;
+  return [...orderParentActions(action.from), action];
+};
 
-    devtoolsInstance.send(
+// -----------------------------------------------------------------------------
+
+const record = (devtoolsInstance, action, dispatch, getState) => {
+  let type = action.type;
+
+  const nesting = getNesting(action.from);
+  type = `${action.from ? `└──${nesting}` : ''} ${type}`;
+
+  devtoolsInstance.send(
+    {
+      ...action,
+      type
+    },
+    getState()
+  );
+};
+
+// -----------------------------------------------------------------------------
+
+const recordDebouncedTree = (devtoolsInstance, action, dispatch, getState) => {
+  const actions = orderParentActions(action);
+
+  actions.forEach(action => {
+    record(
+      devtoolsInstance,
       {
-        ...action,
-        type
+        type: `${action.type}/debounced (${devtoolsInstance.debounceCount})`,
+        from: action.from
       },
-      getState()
+      dispatch,
+      getState
     );
-  };
-}
+  });
+};
 
 // -----------------------------------------------------------------------------
 
@@ -48,10 +84,8 @@ const createDevtools = taverne => {
 
   const initialState = taverne.getState();
   const devtoolsInstance = extension.connect({maxAge: 100});
-  devtoolsInstance.timeout = 0;
-  devtoolsInstance.previousActionType = '';
-
-  const onDispatch = createOnDispatch(devtoolsInstance);
+  devtoolsInstance.timeout = null;
+  devtoolsInstance.previousAction = {type: ''};
 
   devtoolsInstance.init(initialState);
 
@@ -64,29 +98,26 @@ const createDevtools = taverne => {
   });
 
   devtoolsInstance.onDispatch = (action, dispatch, getState) => {
-    if (devtoolsInstance.previousActionType === action.type) {
-      clearTimeout(devtoolsInstance.timeout);
-      devtoolsInstance.debounceCount++;
-      onDispatch(action, dispatch, getState);
+    if (isDebounced(action)) {
+      if (devtoolsInstance.timeout) {
+        clearTimeout(devtoolsInstance.timeout);
+      }
+
+      if (!action.from) {
+        devtoolsInstance.debounceCount++;
+      }
+
+      devtoolsInstance.timeout = setTimeout(() => {
+        if (devtoolsInstance.debounceCount > 0) {
+          recordDebouncedTree(devtoolsInstance, action, dispatch, getState);
+        }
+
+        devtoolsInstance.debounceCount = 0;
+      }, 250);
     } else {
       devtoolsInstance.debounceCount = 0;
+      record(devtoolsInstance, action, dispatch, getState);
     }
-
-    devtoolsInstance.previousActionType = action.type;
-    devtoolsInstance.timeout = setTimeout(() => {
-      if (devtoolsInstance.debounceCount > 0) {
-        onDispatch(
-          {
-            type: `${action.type}/debounced (${devtoolsInstance.debounceCount})`,
-            from: action.from
-          },
-          dispatch,
-          () => {}
-        );
-      }
-      onDispatch(action, dispatch, getState);
-      devtoolsInstance.debounceCount = 0;
-    }, 250);
   };
 
   console.log(`${logPrefix} Plugged Redux devtools`);
