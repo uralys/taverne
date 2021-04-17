@@ -47,6 +47,8 @@ const record = (devtoolsInstance, action, dispatch, getState) => {
     },
     getState()
   );
+
+  action.__recorded = true;
 };
 
 // -----------------------------------------------------------------------------
@@ -98,6 +100,10 @@ const createDevtools = taverne => {
   });
 
   devtoolsInstance.onDispatch = (action, dispatch, getState) => {
+    if (action.__recorded) {
+      return;
+    }
+
     if (isDebounced(action)) {
       if (devtoolsInstance.timeout) {
         clearTimeout(devtoolsInstance.timeout);
