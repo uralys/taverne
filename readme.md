@@ -161,7 +161,13 @@ example: plugging the [redux devtools extension](https://github.com/reduxjs/redu
 
 ## 🐛 Redux devtools
 
-<p align="center"><img  height="280px"  src="./docs/devtools.png"></p>
+Using devtools with `La Taverne` provides debugging without losing performance:
+
+- gathered debounced actions
+- nested actions
+- optional state filtering to improve performance
+
+<p align="center"><img src="./docs/devtools.png"></p>
 
 ```js
 import createLaTaverne from 'taverne';
