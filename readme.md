@@ -161,12 +161,28 @@ example: plugging the [redux devtools extension](https://github.com/reduxjs/redu
 
 ## 🐛 Redux devtools
 
+<p align="center"><img  height="280px"  src="./docs/devtools.png"></p>
+
 ```js
 import createLaTaverne from 'taverne';
-import {devtools} from 'taverne/middlewares';
+import {createDevtools} from 'taverne/middlewares';
 import books from './barrels/books';
 
+const devtools = createDevtools();
 const {dispatch, taverne} = createLaTaverne({books}, [devtools]);
+```
+
+When your app state is too big, you'll hit performance issues with Redux dev tools.
+
+In this case you may need to skip part of state from tracking;
+
+```js
+const devtools = createDevtools({
+  applyStateFiltering? : state => ({
+    ...state,
+    hugeObject: '<skipped>'
+  })
+});
 ```
 
 ## 🏗️ development

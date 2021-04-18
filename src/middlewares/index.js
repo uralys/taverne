@@ -1,3 +1,3 @@
-import devtools from './devtools';
+import createDevtools from './devtools';
 
-export {devtools};
+export {createDevtools};

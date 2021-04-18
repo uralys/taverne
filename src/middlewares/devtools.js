@@ -5,8 +5,12 @@ const logPrefix = '[La Taverne 🐛]';
 // -----------------------------------------------------------------------------
 
 const isDebounced = (action = {}) => {
+  if (action.devtools && action.devtools.debounce) {
+    return true;
+  }
+
   if (!action.from) {
-    return action.devtools && action.devtools.debounce;
+    return false;
   }
 
   return isDebounced(action.from);
@@ -24,6 +28,16 @@ const getNesting = (action = {}) => {
 
 // -----------------------------------------------------------------------------
 
+const rootType = (action = {}) => {
+  if (!action.from) {
+    return action.type;
+  }
+
+  return rootType(action.from);
+};
+
+// -----------------------------------------------------------------------------
+
 const orderParentActions = (action = {}) => {
   if (!action.from) {
     return [action];
@@ -34,18 +48,27 @@ const orderParentActions = (action = {}) => {
 
 // -----------------------------------------------------------------------------
 
-const record = (devtoolsInstance, action, dispatch, getState) => {
+const record = (
+  devtoolsInstance,
+  action,
+  dispatch,
+  getState,
+  applyStateFiltering
+) => {
   let type = action.type;
 
   const nesting = getNesting(action.from);
   type = `${action.from ? `└──${nesting}` : ''} ${type}`;
+
+  const currentState = getState();
+  const state = applyStateFiltering(currentState);
 
   devtoolsInstance.send(
     {
       ...action,
       type
     },
-    getState()
+    state
   );
 
   action.__recorded = true;
@@ -53,26 +76,36 @@ const record = (devtoolsInstance, action, dispatch, getState) => {
 
 // -----------------------------------------------------------------------------
 
-const recordDebouncedTree = (devtoolsInstance, action, dispatch, getState) => {
+const recordDebouncedTree = (
+  devtoolsInstance,
+  action,
+  dispatch,
+  getState,
+  applyStateFiltering
+) => {
   const actions = orderParentActions(action);
 
   actions.forEach(action => {
     record(
       devtoolsInstance,
       {
-        type: `${action.type}/debounced (${devtoolsInstance.debounceCount})`,
+        type: `${action.type} (debounced x ${
+          devtoolsInstance.debounceCount[rootType(action)]
+        })`,
         from: action.from
       },
       dispatch,
-      getState
+      getState,
+      applyStateFiltering
     );
   });
 };
 
 // -----------------------------------------------------------------------------
 
-const createDevtools = taverne => {
+const createDevtools = (options = {}) => taverne => {
   const extension = window && window.__REDUX_DEVTOOLS_EXTENSION__;
+  const {applyStateFiltering = o => o} = options;
 
   if (!extension) {
     if (process.env.NODE_ENV === 'development') {
@@ -86,8 +119,8 @@ const createDevtools = taverne => {
 
   const initialState = taverne.getState();
   const devtoolsInstance = extension.connect({maxAge: 100});
-  devtoolsInstance.timeout = null;
-  devtoolsInstance.previousAction = {type: ''};
+  devtoolsInstance.timeouts = {};
+  devtoolsInstance.debounceCount = {};
 
   devtoolsInstance.init(initialState);
 
@@ -105,24 +138,34 @@ const createDevtools = taverne => {
     }
 
     if (isDebounced(action)) {
-      if (devtoolsInstance.timeout) {
-        clearTimeout(devtoolsInstance.timeout);
+      const actionRootType = rootType(action);
+
+      if (devtoolsInstance.debounceCount[actionRootType] === undefined) {
+        devtoolsInstance.debounceCount[actionRootType] = 0;
       }
 
-      if (!action.from) {
-        devtoolsInstance.debounceCount++;
+      devtoolsInstance.debounceCount[actionRootType]++;
+
+      if (devtoolsInstance.timeouts[actionRootType]) {
+        clearTimeout(devtoolsInstance.timeouts[actionRootType]);
       }
 
-      devtoolsInstance.timeout = setTimeout(() => {
-        if (devtoolsInstance.debounceCount > 0) {
-          recordDebouncedTree(devtoolsInstance, action, dispatch, getState);
+      devtoolsInstance.timeouts[actionRootType] = setTimeout(() => {
+        if (devtoolsInstance.debounceCount[actionRootType] > 0) {
+          recordDebouncedTree(
+            devtoolsInstance,
+            action,
+            dispatch,
+            getState,
+            applyStateFiltering
+          );
         }
 
-        devtoolsInstance.debounceCount = 0;
+        devtoolsInstance.debounceCount[actionRootType] = 0;
       }, 250);
     } else {
-      devtoolsInstance.debounceCount = 0;
-      record(devtoolsInstance, action, dispatch, getState);
+      devtoolsInstance.debounceCount[action.type] = 0;
+      record(devtoolsInstance, action, dispatch, getState, applyStateFiltering);
     }
   };
 

@@ -43,7 +43,11 @@ const createDispatch = (taverne, middlewares) => {
       middlewaresApplied = true;
       dispatch({
         ...nextAction,
-        from: {type: action.type}
+        from: {
+          type: action.type,
+          devtools: action.devtools,
+          from: action.from
+        }
       });
     };
 
