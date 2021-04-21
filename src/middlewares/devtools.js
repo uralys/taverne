@@ -144,7 +144,9 @@ const createDevtools = (options = {}) => taverne => {
         devtoolsInstance.debounceCount[actionRootType] = 0;
       }
 
-      devtoolsInstance.debounceCount[actionRootType]++;
+      if (actionRootType === action.type) {
+        devtoolsInstance.debounceCount[actionRootType]++;
+      }
 
       if (devtoolsInstance.timeouts[actionRootType]) {
         clearTimeout(devtoolsInstance.timeouts[actionRootType]);
