@@ -65,7 +65,22 @@ const createDispatch = (taverne, middlewares) => {
 
 // -----------------------------------------------------------------------------
 
+const checkBarrels = barrels => {
+  Object.keys(barrels).forEach(key => {
+    barrels[key].reactions.forEach(reaction => {
+      if (!reaction.on) {
+        throw new Error(
+          `issue with barrel ${key} --> reaction.on is undefined`
+        );
+      }
+    });
+  });
+};
+
+// -----------------------------------------------------------------------------
+
 const createLaTaverne = (barrels, middlewaresCreators = []) => {
+  checkBarrels(barrels);
   const taverne = createTaverne(barrels);
   const middlewares = createMiddlewares(taverne, middlewaresCreators);
   const dispatch = createDispatch(taverne, middlewares);
