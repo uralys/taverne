@@ -1,6 +1,6 @@
 {
   "name": "taverne",
-  "version": "1.25.2",
+  "version": "1.25.3",
   "description": "Elementary Flux implementation for your React state management",
   "repository": "https://github.com/uralys/taverne",
   "license": "MIT",
