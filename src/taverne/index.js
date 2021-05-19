@@ -67,7 +67,8 @@ const createDispatch = (taverne, middlewares) => {
 
 const checkBarrels = barrels => {
   Object.keys(barrels).forEach(key => {
-    barrels[key].reactions.forEach(reaction => {
+    const reactions = barrels[key].reactions || [];
+    reactions.forEach(reaction => {
       if (!reaction.on) {
         throw new Error(
           `issue with barrel ${key} --> reaction.on is undefined`

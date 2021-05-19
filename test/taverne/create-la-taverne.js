@@ -19,7 +19,7 @@ test('simple definition', t => {
 
 // -----------------------------------------------------------------------------
 
-test('split taverne from reducers names', t => {
+test('split taverne from barrels names', t => {
   const {taverne} = createLaTaverne({
     plop: {},
     plip: {},
