@@ -51,7 +51,7 @@ const createDispatch = (taverne, middlewares) => {
       });
     };
 
-    nextDispatch.rootFunction = dispatch;
+    nextDispatch.asRoot = dispatch;
 
     taverne.onDispatch(action, nextDispatch, taverne.getState);
 
