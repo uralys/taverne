@@ -12,7 +12,7 @@ It provides an optional, yet easy integration with React using custom **hooks**.
 
 ## 🕵️ Demo
 
-- Try live on <https://taverne.surge.sh/>
+- Try live on <https://taverne.uralys.com/>
 - Demo sources: <https://github.com/uralys/taverne-website>
 
 ## 📦 installation
