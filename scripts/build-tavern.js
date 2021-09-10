@@ -23,13 +23,14 @@ const banner = `/**
  */
 `;
 
-const buildTavern = (format, minify) => {
+const buildTavern = (format, target, minify) => {
   const outfile = `${DIST}/${format}/${bundleName}${minify ? '.min' : ''}.js`;
 
   esbuild
     .build({
       banner: {js: banner},
       format,
+      target,
       minify,
       entryPoints: ['src/taverne/index.js'],
       bundle: true,
