@@ -8,7 +8,22 @@ import createPourHook from '../../src/hooks/create-pour-hook';
 
 // -----------------------------------------------------------------------------
 
-test('pour("field")', t => {
+test('pouring a null result', t => {
+  const {taverne} = createLaTaverne({
+    bar: {
+      initialState: null
+    }
+  });
+
+  const pour = createPourHook(taverne);
+  const {result} = renderHook(() => pour('bar'));
+
+  t.is(result.current, null);
+});
+
+// -----------------------------------------------------------------------------
+
+test('pouring a simple string', t => {
   const {taverne} = createLaTaverne({
     bar: {
       initialState: 'ale'
@@ -23,7 +38,7 @@ test('pour("field")', t => {
 
 // -----------------------------------------------------------------------------
 
-test('pour("nested.path.in.state")', t => {
+test('pouring a nested path with dots', t => {
   const {taverne} = createLaTaverne({
     bar: {
       initialState: {ale: {brown: {fresh: 'plenty'}}}
@@ -38,7 +53,7 @@ test('pour("nested.path.in.state")', t => {
 
 // -----------------------------------------------------------------------------
 
-test('pour({fields})', t => {
+test('pouring properties from an object: e.g. pour({properties})', t => {
   const {taverne} = createLaTaverne({
     bar: {
       initialState: {
@@ -70,7 +85,7 @@ test('pour({fields})', t => {
 
 // -----------------------------------------------------------------------------
 
-test('pour(state => {fields})', t => {
+test('pouring with a function to get params inside the state', t => {
   const {taverne} = createLaTaverne({
     navigation: {
       initialState: {
