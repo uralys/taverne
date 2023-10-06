@@ -13,8 +13,14 @@ Linking manually the parent React turned out to be a solution:
 > ln -s ~/absolute/path/to/taverne/node_modules/react ~/absolute/path/to/your/project/node_modules/react
 ```
 
-then use rollup for every changes to `src`
+then call `esbuild` for every changes to `src`
 
 ```sh
 > npm run build
 ```
+
+## publishing
+
+- version
+- push
+- release

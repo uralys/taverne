@@ -2,13 +2,13 @@
 
 <a href="https://www.npmjs.com/package/taverne"><img src="https://img.shields.io/npm/v/taverne?color=%23123" alt="Current npm package version." /></a> <a href="https://www.npmjs.com/package/taverne"><img src="https://img.shields.io/github/license/uralys/taverne" alt="MIT" /></a> <a href="https://immerjs.github.io/immer/produce"><img src="https://img.shields.io/badge/immer-produce-5908d2.svg" alt="immer" /> </a>
 
+<p align="center"><img  src="./docs/taverne.png"></p>
+
 `La Taverne` is an elementary [Flux](https://facebook.github.io/flux/docs/in-depth-overview) implementation to manage a global app state.
 
 It provides an optional, yet easy integration with React using custom **hooks**.
 
-<p align="center"><img  height="280px"  src="./docs/taverne.png"></p>
-
-![action->dispatcher->store->view](https://facebook.github.io/flux/img/overview/flux-simple-f8-diagram-1300w.png)
+![action->dispatcher->store->view](https://facebookarchive.github.io/flux/img/overview/flux-simple-f8-diagram-1300w.png)
 
 ## 🕵️ Demo
 
@@ -193,13 +193,5 @@ const devtools = createDevtools({
 
 ## 🏗️ development
 
-[![devDeps](https://david-dm.org/uralys/taverne/dev-status.svg)](https://david-dm.org/uralys/taverne?type=dev)
-[![deps](https://david-dm.org/uralys/taverne/status.svg)](https://david-dm.org/uralys/taverne)
-
-local dev [tips](docs/dev.md)
-
-## 👋 about La Taverne
-
-<a href="https://www.npmjs.com/package/taverne"><img src="https://img.shields.io/github/license/uralys/taverne" alt="MIT" /></a>
-
-🎨 Tavern drawing: <https://www.deviantart.com/brandonstarr/art/Colored-Pirate-Tavern-210784171>
+- 📓 Few local dev [notes](docs/dev.md) for the curious ones.
+- ✅ Issues and PR Welcomed!
