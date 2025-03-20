@@ -4,13 +4,21 @@
   "description": "Elementary Flux implementation for your React state management",
   "repository": "https://github.com/uralys/taverne",
   "license": "MIT",
+  "author": "@chrisdugne",
+  "contributors": [{
+    "name": "Chris Dugne",
+    "email": "chris.dugne@uralys.com",
+    "url": "http://uralys.com"
+  }],
+  "funding": {
+    "url": "https://github.com/sponsors/chrisdugne"
+  },
   "keywords": [
     "flux",
     "react",
     "state",
     "react-hooks"
   ],
-  "author": "@chrisdugne",
   "main": "cjs/taverne.js",
   "module": "esm/taverne.js",
   "sideEffects": false,
